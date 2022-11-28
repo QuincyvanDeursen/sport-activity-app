@@ -1,0 +1,22 @@
+.backgrounddark {
+  background-color: rgba(29, 29, 29, 0.798);
+  border-radius: 25px;
+  margin-top: 10%;
+  margin-bottom: 10%;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.custombutton {
+  background-color: #000000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #1044f2;
+}
+
+.custombutton:hover {
+  background-color: #1044f2;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #000000;
+}

@@ -1,0 +1,24 @@
+body {
+  background-image: linear-gradient(to top, #00000096, #00000096),
+    url('apps\sport-activity-ui\src\assets\Images\background.jpg');
+  background-position: center;
+  background-size: cover;
+  color: #ffffff;
+  background-repeat: no-repeat;
+}
+a,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+li,
+th,
+td {
+  color: white;
+}
+a:hover {
+  color: #585858;
+}

@@ -1,0 +1,14 @@
+footer {
+  background: rgb(0, 0, 0);
+  background: linear-gradient(
+    10deg,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 28%,
+    rgba(84, 86, 87, 1) 100%
+  );
+  border-top: 1px solid #1044f2;
+}
+
+.Copyright {
+  color: #616161;
+}

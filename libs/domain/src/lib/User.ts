@@ -1,8 +1,12 @@
 import { Role } from './Role';
+import { Sportclub } from './Sportclub';
 
 export interface User {
-  userId: number;
-  username: string;
+  email: string;
   password: string;
+  firstName: string;
+  lastName: string;
+  city: string;
   roles: Role[];
+  sportclub: Sportclub;
 }

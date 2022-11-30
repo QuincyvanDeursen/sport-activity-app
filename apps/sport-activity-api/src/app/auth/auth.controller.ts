@@ -2,8 +2,8 @@ import { Controller, Request, Post, UseGuards, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { Role } from '@sport-activity-app/domain';
 import { AuthService } from './auth.service';
-import { HasRoles } from './roles.decorator';
-import { RolesGuard } from './roles.guard';
+import { HasRoles } from './AuthTsFiles/roles.decorator';
+import { RolesGuard } from './AuthTsFiles/roles.guard';
 
 @Controller()
 export class AuthController {
@@ -12,18 +12,13 @@ export class AuthController {
   @UseGuards(AuthGuard('local'))
   @Post('auth/login')
   async login(@Request() req) {
+    console.log('auth controller: Login called');
     return this.authService.login(req.user);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
-
-  @HasRoles(Role.Admin)
+  @HasRoles(Role.Employee, Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Get('admin')
+  @Get('employee')
   onlyAdmin(@Request() req) {
     return req.user;
   }

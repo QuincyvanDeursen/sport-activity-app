@@ -6,20 +6,45 @@ export class UserService {
   //mock data
   private readonly users: User[] = [
     {
-      userId: 1,
-      username: 'anna',
-      password: '12345',
-      roles: [Role.User],
+      email: 'quincyvandeursen@avans.nl',
+      password: 'secret123',
+      firstName: 'Quincy',
+      lastName: 'van Deursen',
+      city: 'BREDA',
+      roles: [Role.Admin],
+      sportclub: {
+        clubName: 'AlphaGym',
+        websiteURL: 'https://maxgymfysio.nl/',
+        email: 'maxfysio@gmail.com',
+        phoneNumber: '0612345678',
+        sports: ['Powerliften', 'Weightlifting'],
+        address: {
+          city: 'BREDA',
+          zipCode: '1234MB',
+          street: 'Lisdodde',
+          houseNumber: '103',
+        },
+      },
     },
     {
-      userId: 2,
-      username: 'andrew',
-      password: '54321',
-      roles: [Role.Admin],
+      email: 'jimmyvandeursen@avans.nl',
+      password: 'secret123',
+      firstName: 'Jimmy',
+      lastName: 'van Deursen',
+      city: 'BREDA',
+      roles: [Role.User],
+      sportclub: undefined,
     },
   ];
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username);
+  async findOne(email: string): Promise<User | undefined> {
+    const foundUser = this.users.find((user) => user.email === email);
+    console.log('User Service method FindOne called.');
+    if (foundUser) {
+      console.log('User Service Found User:');
+      console.log(foundUser);
+      return foundUser;
+    }
+    console.log('User Service found no user.');
   }
 }

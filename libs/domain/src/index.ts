@@ -1,3 +1,4 @@
-export * from './lib/domain.module';
-export * from './lib/Role';
-export * from './lib/User';
+export { Address } from './lib/Address';
+export { Role } from './lib/Role';
+export { Sportclub } from './lib/Sportclub';
+export { User } from './lib/User';

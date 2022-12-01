@@ -1,0 +1,6 @@
+Check volgende files:
+auth.module.ts --> maakt gebruikt van .env (werkt mogelijk niet correct)
+auth.service.ts --> maakt gebruikt van username ipv email om the authenticeren
+user.service --> maakt gebruik van mock user
+User --> bevat niet de correcte data
+

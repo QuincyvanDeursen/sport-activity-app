@@ -8,6 +8,15 @@ import { Role, User } from '@sport-activity-app/domain';
 })
 export class IntroductionComponent implements OnInit {
   constructor() {}
+  user: User = {
+    email: 'jimmyvandeursen@avans.nl',
+    password: 'secret123',
+    firstName: 'Jimmy',
+    lastName: 'van Deursen',
+    city: 'BREDA',
+    roles: [Role.User],
+    sportclub: undefined,
+  };
 
   ngOnInit(): void {}
 }

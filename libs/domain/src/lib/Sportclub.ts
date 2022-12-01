@@ -1,4 +1,4 @@
-import { address } from './Address';
+import { Address } from './Address';
 
 export interface Sportclub {
   clubName: string;
@@ -6,5 +6,5 @@ export interface Sportclub {
   email: string;
   phoneNumber: string;
   sports: string[];
-  address: address;
+  address: Address;
 }

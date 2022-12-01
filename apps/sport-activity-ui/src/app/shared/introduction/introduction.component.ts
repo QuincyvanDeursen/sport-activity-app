@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Role, User } from '@sport-activity-app/domain';
 
 @Component({
   selector: 'sport-activity-app-introduction',

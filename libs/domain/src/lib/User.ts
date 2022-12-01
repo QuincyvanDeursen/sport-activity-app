@@ -8,5 +8,5 @@ export interface User {
   lastName: string;
   city: string;
   roles: Role[];
-  sportclub: Sportclub;
+  sportclub?: Sportclub;
 }

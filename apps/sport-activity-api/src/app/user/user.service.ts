@@ -1,50 +1,35 @@
-import { Injectable } from '@nestjs/common';
-import { Role, User } from '@sport-activity-app/domain';
+import { HttpException, Injectable } from '@nestjs/common';
+import { User } from '@sport-activity-app/domain';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User as UserModel } from '../Schemas/user.schema';
 
 @Injectable()
 export class UserService {
-  //mock data
-  private readonly users: User[] = [
-    {
-      email: 'quincyvandeursen@avans.nl',
-      password: 'secret123',
-      firstName: 'Quincy',
-      lastName: 'van Deursen',
-      city: 'BREDA',
-      roles: [Role.Admin],
-      sportclub: {
-        clubName: 'AlphaGym',
-        websiteURL: 'https://maxgymfysio.nl/',
-        email: 'maxfysio@gmail.com',
-        phoneNumber: '0612345678',
-        sports: ['Powerliften', 'Weightlifting'],
-        address: {
-          city: 'BREDA',
-          zipCode: '1234MB',
-          street: 'Lisdodde',
-          houseNumber: '103',
-        },
-      },
-    },
-    {
-      email: 'jimmyvandeursen@avans.nl',
-      password: 'secret123',
-      firstName: 'Jimmy',
-      lastName: 'van Deursen',
-      city: 'BREDA',
-      roles: [Role.User],
-      sportclub: undefined,
-    },
-  ];
+  constructor(
+    @InjectModel(UserModel.name) private userModel: Model<UserModel>
+  ) {}
 
-  async findOne(email: string): Promise<User | undefined> {
-    const foundUser = this.users.find((user) => user.email === email);
-    console.log('User Service method FindOne called.');
-    if (foundUser) {
-      console.log('User Service Found User:');
-      console.log(foundUser);
-      return foundUser;
+  async create(user: User): Promise<any> {
+    try {
+      const createdUser = new this.userModel(user);
+      return await createdUser.save();
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new HttpException(
+          'Duplicate entry, email has to be unique.',
+          409
+        );
+      } else {
+        throw new HttpException(error.message, 400);
+      }
     }
-    console.log('User Service found no user.');
+  }
+  async findUserByEmail(email: string): Promise<any> {
+    const user = await this.userModel.findOne({ email }).exec();
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    return user;
   }
 }

@@ -1,0 +1,75 @@
+<div class="container">
+  <div class="row backgrounddark">
+    <div class="col-12 p-4 d-flex justify-content-center">
+      <h1>Login</h1>
+    </div>
+    <div class="col-12 text-center">
+      <form
+        #loginForm="ngForm"
+        name="form"
+        (ngSubmit)="onClickSubmit()"
+        novalidate
+      >
+        <div class="form-row">
+          <div class="col">
+            <label for="emailAddress">Email</label>
+            <input
+              type="text"
+              name="name"
+              class="form-control"
+              placeholder="johndoe@gmail.com"
+              [(ngModel)]="identity.emailAddress"
+              #emailAddress="ngModel"
+              required
+            />
+            <div
+              *ngIf="
+                emailAddress.invalid &&
+                (emailAddress.dirty || emailAddress.touched)
+              "
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="emailAddress.errors!['required']">
+                Vul een geldig email adres in.
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <label for="password">Wachtwoord</label>
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              placeholder="********"
+              [(ngModel)]="identity.password"
+              #password="ngModel"
+              required
+            />
+            <div
+              *ngIf="password.invalid && (password.dirty || password.touched)"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="password.errors!['required']">
+                Vul uw wachtwoord in.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row py-3">
+          <div class="col d-flex justify-content-center">
+            <button class="btn customcancelbutton mx-2" routerLink="..">
+              Annuleren
+            </button>
+            <button
+              type="submit"
+              class="btn customloginbutton mx-2"
+              [disabled]="!loginForm.valid"
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

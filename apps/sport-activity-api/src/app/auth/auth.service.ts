@@ -26,12 +26,12 @@ export class AuthService {
   }
   async login(user: any) {
     const payload = {
-      email: user.email,
-      firstname: user.firstName,
-      lastName: user.lastName,
-      city: user.city,
-      roles: user.roles,
-      sportclub: user.sportclub,
+      email: user._doc.email,
+      firstname: user._doc.firstName,
+      lastName: user._doc.lastName,
+      city: user._doc.city,
+      roles: user._doc.roles,
+      sportclub: user._doc.sportclub,
     };
     console.log('auth service Login method got user data and payload:');
     console.log(user);

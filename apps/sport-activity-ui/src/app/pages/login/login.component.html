@@ -4,32 +4,24 @@
       <h1>Login</h1>
     </div>
     <div class="col-12 text-center">
-      <form
-        #loginForm="ngForm"
-        name="form"
-        (ngSubmit)="onClickSubmit()"
-        novalidate
-      >
+      <form #loginForm="ngForm" name="form" (ngSubmit)="login()" novalidate>
         <div class="form-row">
           <div class="col">
-            <label for="emailAddress">Email</label>
+            <label for="username">Email</label>
             <input
               type="text"
               name="name"
               class="form-control"
               placeholder="johndoe@gmail.com"
-              [(ngModel)]="identity.emailAddress"
-              #emailAddress="ngModel"
+              [(ngModel)]="identity.username"
+              #username="ngModel"
               required
             />
             <div
-              *ngIf="
-                emailAddress.invalid &&
-                (emailAddress.dirty || emailAddress.touched)
-              "
+              *ngIf="username.invalid && (username.dirty || username.touched)"
               class="alert alert-danger mt-1"
             >
-              <div *ngIf="emailAddress.errors!['required']">
+              <div *ngIf="username.errors!['required']">
                 Vul een geldig email adres in.
               </div>
             </div>

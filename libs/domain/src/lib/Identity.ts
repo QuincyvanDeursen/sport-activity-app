@@ -1,4 +1,4 @@
 export interface Identity {
-  emailAddress: string;
+  username: string;
   password: string;
 }

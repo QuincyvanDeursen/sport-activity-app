@@ -22,3 +22,15 @@ nav {
     rgba(84, 86, 87, 1) 100%
   );
 }
+
+.custombutton {
+  background-color: #000000;
+  color: white;
+  border: 1px solid #1044f2;
+}
+
+.custombutton:hover {
+  background-color: #1044f2;
+  color: white;
+  border: 1px solid #000000;
+}

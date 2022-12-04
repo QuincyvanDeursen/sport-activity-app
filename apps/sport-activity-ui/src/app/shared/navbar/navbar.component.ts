@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { LoginService } from '../../pages/login/login.service';
 
 @Component({
   selector: 'sport-activity-app-navbar',
@@ -7,7 +8,21 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavbarComponent implements OnInit {
   public isMenuCollapsed = true;
-  constructor() {}
+  constructor(private loginService: LoginService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log('navbar component init');
+  }
+
+  loggedIn(): boolean {
+    return this.loginService.loggedIn();
+  }
+
+  logout(): void {
+    this.loginService.logout();
+  }
+
+  getCurrentUser() {
+    return this.loginService.currentUser;
+  }
 }

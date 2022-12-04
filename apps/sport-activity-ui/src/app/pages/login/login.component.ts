@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Identity, User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
 import { LoginService } from './login.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'sport-activity-app-login',
@@ -30,7 +31,13 @@ export class LoginComponent implements OnInit, OnDestroy {
         console.log(v);
         this.router.navigate(['/']);
       },
-      error: (e) => console.error(e),
+      error: (e) =>
+        Swal.fire({
+          title: 'Oops...',
+          text: 'Ongeldig email en wachtwoord combinatie',
+          icon: 'error',
+          confirmButtonText: 'Sluiten',
+        }),
       complete: () => console.log('login complete'),
     });
   }

@@ -1,1 +1,136 @@
-<p>register works!</p>
+<div class="container">
+  <div class="row backgrounddark">
+    <div class="col-12 p-4 d-flex justify-content-center">
+      <h1>Registreren</h1>
+    </div>
+    <div class="col-12 text-center">
+      <form
+        #registerForm="ngForm"
+        name="form"
+        (ngSubmit)="register()"
+        novalidate
+      >
+        <div class="form-row">
+          <div class="col">
+            <label for="firstName">Voornaam</label>
+            <input
+              type="text"
+              name="firstName"
+              class="form-control"
+              placeholder="Jan"
+              [(ngModel)]="newUser.firstName"
+              #firstName="ngModel"
+              required
+            />
+            <div
+              *ngIf="
+                firstName.invalid && (firstName.dirty || firstName.touched)
+              "
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="firstName.errors!['required']">
+                Voornaam is verplicht.
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <label for="lastName">Achternaam</label>
+            <input
+              type="text"
+              name="lastName"
+              class="form-control"
+              placeholder="Klaasen"
+              [(ngModel)]="newUser.lastName"
+              #lastName="ngModel"
+              required
+            />
+            <div
+              *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="lastName.errors!['required']">
+                Achternaam is verplicht.
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <label for="email">Email</label>
+            <input
+              type="text"
+              name="email"
+              class="form-control"
+              placeholder="johndoe@gmail.com"
+              [(ngModel)]="newUser.email"
+              #email="ngModel"
+              required
+            />
+            <div
+              *ngIf="email.invalid && (email.dirty || email.touched)"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="email.errors!['required']">
+                Vul een geldig email adres in.
+              </div>
+            </div>
+          </div>
+          <div class="col">
+            <label for="city">Woonplaats</label>
+            <input
+              type="text"
+              name="city"
+              class="form-control"
+              placeholder="Breda"
+              [(ngModel)]="newUser.city"
+              #city="ngModel"
+              required
+            />
+            <div
+              *ngIf="city.invalid && (city.dirty || city.touched)"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="city.errors!['required']">Een stad is verplicht.</div>
+            </div>
+          </div>
+          <div class="col">
+            <label for="password">Wachtwoord</label>
+            <input
+              type="password"
+              name="password"
+              class="form-control"
+              placeholder="********"
+              [(ngModel)]="newUser.password"
+              #password="ngModel"
+              minlength="8"
+              required
+            />
+            <div
+              *ngIf="password.invalid && password.touched"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="password.errors!['required']">
+                Vul uw wachtwoord in van tenminste 8 tekens.
+              </div>
+              <div *ngIf="password.errors!['minlength']">
+                Vul uw wachtwoord in van tenminste 8 tekens.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row py-3">
+          <div class="col d-flex justify-content-center">
+            <button class="btn customcancelbutton mx-2" routerLink="..">
+              Annuleren
+            </button>
+            <button
+              type="submit"
+              class="btn customloginbutton mx-2"
+              [disabled]="!registerForm.valid"
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

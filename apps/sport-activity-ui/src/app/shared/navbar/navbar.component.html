@@ -40,7 +40,10 @@
           >
         </li>
         <li *ngIf="!loggedIn()" class="nav-item">
-          <a class="nav-link" [routerLink]="" (click)="isMenuCollapsed = true"
+          <a
+            class="nav-link"
+            routerLink="register"
+            (click)="isMenuCollapsed = true"
             >Registeren</a
           >
         </li>
@@ -60,11 +63,10 @@
               aria-labelledby="dropdownBasic1"
             >
               <button ngbDropdownItem>
-                <a
-                  *ngIf="loggedIn()"
-                  class="nav-link"
-                  [routerLink]=""
-                  (click)="logout()"
+                <a class="nav-link" routerLink="profile">Dashboard</a>
+              </button>
+              <button ngbDropdownItem>
+                <a class="nav-link" [routerLink]="" (click)="logout()"
                   >Uitloggen</a
                 >
               </button>

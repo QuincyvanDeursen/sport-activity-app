@@ -11,7 +11,7 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<any> {
     console.log('auth service method ValidateUser called');
-    const user = await this.usersService.findUserByEmail(email);
+    const user = await this.usersService.findUserByEmail(email.toLowerCase());
     if (user && user.password === pass) {
       console.log(
         'auth service validateUser: password does match with found user.'

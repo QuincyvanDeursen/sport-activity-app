@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { Address, Role, Sportclub, User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
+import { SweetAlert } from '../../shared/HelperMethods/SweetAlert';
 import { RegisterService } from './register.service';
 
 @Component({
@@ -63,20 +64,12 @@ export class RegisterComponent implements OnInit, OnDestroy {
         console.log('register component next');
         console.log(v);
         this.router.navigate(['login']);
-        Swal.fire({
-          title: 'Succes',
-          text: 'Account succesvol aangemaakt',
-          icon: 'success',
-          confirmButtonText: 'Sluiten',
-        });
+        SweetAlert.showSuccessAlert('Account succesvol aangemaakt!');
       },
       error: () =>
-        Swal.fire({
-          title: 'Oops...',
-          text: 'Email is mogelijk al in gebruik',
-          icon: 'error',
-          confirmButtonText: 'Sluiten',
-        }),
+        SweetAlert.showErrorAlert(
+          'Email is al in gebruik, probeer een andere email.'
+        ),
       complete: () => console.log('register complete'),
     });
   }

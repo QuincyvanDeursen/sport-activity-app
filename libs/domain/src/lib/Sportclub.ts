@@ -5,6 +5,5 @@ export interface Sportclub {
   websiteURL: string;
   email: string;
   phoneNumber: string;
-  sports: string[];
   address: Address;
 }

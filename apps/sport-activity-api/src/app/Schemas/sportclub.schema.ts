@@ -14,8 +14,6 @@ export class Sportclub {
   email: string;
   @Prop({ required: true })
   phoneNumber: string;
-  @Prop({ default: [] })
-  sports: string[];
   @Prop({ required: true })
   address: Address;
 }

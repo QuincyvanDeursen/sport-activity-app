@@ -3,6 +3,21 @@
     <div class="col-12 p-4 d-flex justify-content-center">
       <h1>Registreren</h1>
     </div>
+    <div class="col-12 d-flex justify-content-center mb-3">
+      <div class="form-check form-switch">
+        <input
+          mdbCheckbox
+          class="form-check-input"
+          type="checkbox"
+          id="flexSwitchCheckDefault"
+          [(ngModel)]="isEmployee"
+        />
+        <label class="form-check-label" for="flexSwitchCheckDefault"
+          >Default switch checkbox input</label
+        >
+      </div>
+    </div>
+
     <div class="col-12 text-center">
       <form
         #registerForm="ngForm"
@@ -116,6 +131,192 @@
             </div>
           </div>
         </div>
+        <div *ngIf="isEmployee">
+          <div class="col">
+            <label for="clubName">Naam sportclub</label>
+            <input
+              type="text"
+              name="clubName"
+              class="form-control"
+              placeholder="De Sportclub"
+              [(ngModel)]="newSportclub.clubName"
+              #clubName="ngModel"
+              required
+            />
+            <div
+              *ngIf="clubName.invalid && (clubName.dirty || clubName.touched)"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="clubName.errors!['required']">
+                Een clubnaam is verplicht.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isEmployee">
+          <div class="col">
+            <label for="website">Website sportclub</label>
+            <input
+              type="text"
+              name="website"
+              class="form-control"
+              placeholder="www.jouwwebsite.nl"
+              [(ngModel)]="newSportclub.websiteURL"
+              #website="ngModel"
+              required
+            />
+            <div
+              *ngIf="website.invalid && (website.dirty || website.touched)"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="website.errors!['required']">
+                Een websiteURL is verplicht.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isEmployee">
+          <div class="col">
+            <label for="companyEmail">Bedrijfsemail sportclub</label>
+            <input
+              type="text"
+              name="companyEmail"
+              class="form-control"
+              placeholder="jouwbedrijf@company.nl"
+              [(ngModel)]="newSportclub.email"
+              #companyEmail="ngModel"
+              required
+            />
+            <div
+              *ngIf="
+                companyEmail.invalid &&
+                (companyEmail.dirty || companyEmail.touched)
+              "
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="companyEmail.errors!['required']">
+                Een Bedrijfsemail is verplicht.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isEmployee">
+          <div class="col">
+            <label for="phonenumber">Telefoonnummer sportclub</label>
+            <input
+              type="text"
+              name="phonenumber"
+              class="form-control"
+              placeholder="0761234567"
+              [(ngModel)]="newSportclub.phoneNumber"
+              #phonenumber="ngModel"
+              required
+            />
+            <div
+              *ngIf="
+                phonenumber.invalid &&
+                (phonenumber.dirty || phonenumber.touched)
+              "
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="phonenumber.errors!['required']">
+                Een telefoonnummer is verplicht.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isEmployee">
+          <div class="col">
+            <label for="clubCity">Stad van Sportclub</label>
+            <input
+              type="text"
+              name="clubCity"
+              class="form-control"
+              placeholder="Breda"
+              [(ngModel)]="newSportclub.address.city"
+              #clubCity="ngModel"
+              required
+            />
+            <div
+              *ngIf="clubCity.invalid && (clubCity.dirty || clubCity.touched)"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="clubCity.errors!['required']">
+                Een telefoonnummer is verplicht.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isEmployee">
+          <div class="col">
+            <label for="zipcode">Postcode sportclub</label>
+            <input
+              type="text"
+              name="zipcode"
+              class="form-control"
+              placeholder="1234AB"
+              [(ngModel)]="newSportclub.address.zipCode"
+              #zipcode="ngModel"
+              length="6"
+              required
+            />
+            <div
+              *ngIf="zipcode.invalid && zipcode.touched"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="zipcode.errors!['required']">
+                Een postcode is verplicht.
+              </div>
+              <div *ngIf="zipcode.errors!['length']">
+                Een postcode betsaat uit 6 tekens.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isEmployee">
+          <div class="col">
+            <label for="street">Straat sportclub</label>
+            <input
+              type="text"
+              name="street"
+              class="form-control"
+              placeholder="waterviolier"
+              [(ngModel)]="newSportclub.address.street"
+              #street="ngModel"
+              required
+            />
+            <div
+              *ngIf="street.invalid && street.touched"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="street.errors!['required']">
+                Een straat is verplicht.
+              </div>
+            </div>
+          </div>
+        </div>
+        <div *ngIf="isEmployee">
+          <div class="col">
+            <label for="Housenumber">Huisnummer sportclub</label>
+            <input
+              type="text"
+              name="Housenumber"
+              class="form-control"
+              placeholder="105A"
+              [(ngModel)]="newSportclub.address.houseNumber"
+              #Housenumber="ngModel"
+              required
+            />
+            <div
+              *ngIf="Housenumber.invalid && Housenumber.touched"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="Housenumber.errors!['required']">
+                Een huisnummer is verplicht.
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="row py-3">
           <div class="col d-flex justify-content-center">
             <button class="btn customcancelbutton mx-2" routerLink="..">
@@ -126,7 +327,7 @@
               class="btn customloginbutton mx-2"
               [disabled]="!registerForm.valid"
             >
-              Login
+              Registreren
             </button>
           </div>
         </div>

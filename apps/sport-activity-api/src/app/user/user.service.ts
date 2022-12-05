@@ -13,15 +13,19 @@ export class UserService {
   //creating a user.
   async create(user: User): Promise<UserModel> {
     const createdUser = new this.userModel(user);
+    createdUser.email = user.email.toLowerCase();
     return await createdUser.save();
   }
 
   //finding a user by email.
   async findUserByEmail(email: string): Promise<any> {
-    const user = await this.userModel.findOne({ email }).exec();
+    const lowerCaseEmail = email.toLowerCase();
+
+    const user = await this.userModel.findOne({ email: lowerCaseEmail }).exec();
     if (!user) {
       throw new HttpException('User not found', 404);
     }
+
     return user;
   }
 }

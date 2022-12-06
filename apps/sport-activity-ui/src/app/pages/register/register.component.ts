@@ -1,8 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Address, Role, Sportclub, User } from '@sport-activity-app/domain';
+import { Role, Sportclub, User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
-import Swal from 'sweetalert2';
 import { SweetAlert } from '../../shared/HelperMethods/SweetAlert';
 import { RegisterService } from './register.service';
 

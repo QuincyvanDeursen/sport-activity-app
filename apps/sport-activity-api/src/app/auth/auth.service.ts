@@ -24,7 +24,9 @@ export class AuthService {
     );
     return null;
   }
-  async login(user: any) {
+  // This method is called by the auth controller
+  // user is a field in the request (JSON)
+  async login(user) {
     const payload = {
       id: user._doc._id,
       email: user._doc.email,
@@ -38,6 +40,7 @@ export class AuthService {
     console.log(user);
     console.log(payload);
     return {
+      statusCode: 200,
       access_token: this.jwtService.sign(payload),
     };
   }

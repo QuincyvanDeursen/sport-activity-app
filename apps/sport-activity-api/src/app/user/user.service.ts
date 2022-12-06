@@ -12,9 +12,21 @@ export class UserService {
 
   //creating a user.
   async create(user: User): Promise<UserModel> {
-    const createdUser = new this.userModel(user);
-    createdUser.email = user.email.toLowerCase();
-    return await createdUser.save();
+    try {
+      const createdUser = new this.userModel(user);
+      createdUser.email = user.email.toLowerCase();
+      const newUser = await createdUser.save();
+      return newUser;
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new HttpException(
+          'Duplicate entry, email has to be unique.',
+          409
+        );
+      } else {
+        throw new HttpException(error.message, 400);
+      }
+    }
   }
 
   //finding a user by email.

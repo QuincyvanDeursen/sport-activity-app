@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Identity } from '@sport-activity-app/domain';
+import { Identity, User } from '@sport-activity-app/domain';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { JwtHelperService } from '@auth0/angular-jwt';
@@ -25,7 +25,14 @@ export class LoginService {
     sportclub: '',
   };
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+    if (localStorage.getItem('token')) {
+      const decodedToken = this.jwtHelperService.decodeToken(
+        localStorage.getItem('token') || ''
+      );
+      this.DecodedTokenToUser(decodedToken);
+    }
+  }
 
   //login request.
   login(userIdentity: Identity): Observable<any> {

@@ -1,13 +1,13 @@
 import {
   Controller,
-  Get,
-  UseGuards,
-  Request,
   Post,
   Body,
-  HttpException,
+  UseGuards,
+  Get,
+  Request,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+
 import { User } from '@sport-activity-app/domain';
 import { User as UserModel } from '../Schemas/user.schema';
 import { UserService } from './user.service';
@@ -26,17 +26,6 @@ export class UserController {
   //register endpoint
   @Post('register')
   async register(@Body() user: User): Promise<UserModel> {
-    try {
-      return await this.userService.create(user);
-    } catch (error) {
-      if (error.code === 11000) {
-        throw new HttpException(
-          'Duplicate entry, email has to be unique.',
-          409
-        );
-      } else {
-        throw new HttpException(error.message, 400);
-      }
-    }
+    return await this.userService.create(user);
   }
 }

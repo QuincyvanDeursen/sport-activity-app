@@ -7,8 +7,4 @@ import { Component, HostListener } from '@angular/core';
 })
 export class AppComponent {
   title = 'sport-activity-ui';
-  @HostListener('window:beforeunload', ['$event'])
-  clearLocalStorage() {
-    localStorage.clear();
-  }
 }

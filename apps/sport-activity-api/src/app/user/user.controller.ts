@@ -9,7 +9,6 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 
 import { User } from '@sport-activity-app/domain';
-import { User as UserModel } from '../Schemas/user.schema';
 import { UserService } from './user.service';
 
 @Controller('user')
@@ -25,7 +24,8 @@ export class UserController {
 
   //register endpoint
   @Post('register')
-  async register(@Body() user: User): Promise<UserModel> {
-    return await this.userService.create(user);
+  async register(@Body() user: User): Promise<object> {
+    const result = await this.userService.create(user);
+    return result;
   }
 }

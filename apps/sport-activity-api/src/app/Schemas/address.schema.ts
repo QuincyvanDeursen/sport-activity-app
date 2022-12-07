@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-export type AddressDocument = Address & Document;
+import { HydratedDocument } from 'mongoose';
+export type AddressDocument = HydratedDocument<Address>;
 
 @Schema()
 export class Address {
@@ -13,4 +13,4 @@ export class Address {
   @Prop({ required: true })
   houseNumber: string;
 }
-export const UserSchema = SchemaFactory.createForClass(Address);
+export const AddressSchema = SchemaFactory.createForClass(Address);

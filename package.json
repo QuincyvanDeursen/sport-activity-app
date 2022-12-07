@@ -68,6 +68,7 @@
     "@popperjs/core": "^2.10.2",
     "bootstrap": "^5.2.0",
     "config": "^3.3.8",
+    "mongodb-memory-server": "^8.10.1",
     "mongoose": "^6.7.5",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.0",

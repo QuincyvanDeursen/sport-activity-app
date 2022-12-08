@@ -41,8 +41,9 @@ export class LoginService {
       .post<any>(`${environment.SERVER_API_URL}auth/login`, body, httpOptions)
       .pipe(
         map((response: any) => {
+          console.log(response);
           const decodedToken = this.jwtHelperService.decodeToken(
-            response.access_token
+            response.results.access_token
           );
           this.DecodedTokenToUser(decodedToken);
           localStorage.setItem('token', response.access_token);

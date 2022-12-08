@@ -7,6 +7,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { Role, User } from '@sport-activity-app/domain';
 import { UserSchema } from '../../Schemas/user.schema';
+import { HttpException } from '@nestjs/common';
 
 describe('UserService', () => {
   let service: UserService;
@@ -105,6 +106,34 @@ describe('UserService', () => {
         statusCode: 201,
         message: `User ${mockUser.firstName} created`,
       });
+    });
+
+    it('should not create a new user', async () => {
+      const mockUser: User = {
+        email: 'testuser@gmail.com',
+        password: 'testpassword',
+        firstName: 'testfirstname',
+        lastName: 'testlastname',
+        city: 'testcity',
+        roles: [Role.User],
+      };
+      const mockUser2: User = {
+        email: 'testuser@gmail.com',
+        password: 'test2password',
+        firstName: 'test2firstname',
+        lastName: 'test2lastname',
+        city: 'test2city',
+        roles: [Role.User],
+      };
+
+      await service.create(mockUser);
+      try {
+        await service.create(mockUser2);
+      } catch (e) {
+        expect(e).toBeInstanceOf(HttpException);
+        expect(e.response).toEqual('Duplicate entry, email has to be unique.');
+        expect(e.status).toEqual(409);
+      }
     });
   });
 });

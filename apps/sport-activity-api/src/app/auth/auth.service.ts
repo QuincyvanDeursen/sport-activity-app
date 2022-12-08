@@ -18,7 +18,7 @@ export class AuthService {
       );
       const { password, ...result } = user;
       return {
-        statusCode: '201',
+        statusCode: 201,
         result: result,
       };
     }
@@ -44,7 +44,7 @@ export class AuthService {
     console.log(user);
     console.log(payload);
     return {
-      statusCode: '200',
+      statusCode: 200,
       access_token: this.jwtService.sign(payload),
     };
   }

@@ -2,7 +2,7 @@ import { Role } from './Role';
 import { Sportclub } from './Sportclub';
 
 export interface User {
-  id?: string;
+  _id?: string;
   email: string;
   password: string;
   firstName: string;
@@ -10,4 +10,5 @@ export interface User {
   city: string;
   roles: Role[];
   sportclub?: Sportclub;
+  followingUsers?: string[];
 }

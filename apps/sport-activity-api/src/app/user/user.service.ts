@@ -15,6 +15,11 @@ export class UserService {
     try {
       const createdUser = new this.userModel(user);
       createdUser.email = user.email.toLowerCase();
+      createdUser.firstName = user.firstName.toLowerCase();
+      createdUser.lastName = user.lastName.toLowerCase();
+
+      console.log(user);
+
       await createdUser.save();
       return {
         statusCode: 201,
@@ -41,5 +46,50 @@ export class UserService {
     }
 
     return user;
+  }
+
+  //finding a user by id.
+  async findUserById(id: string): Promise<any> {
+    const user = await this.userModel.findById(id).select('-password').lean();
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    return user;
+  }
+
+  //getting all users without password (no employees/admins).
+  async getAllUsers(): Promise<User[]> {
+    console.log('get all users service');
+    const result: User[] = await this.userModel
+      .find({ roles: { $in: ['user'] } })
+      .select('-password')
+      .lean();
+    console.log(result);
+    if (!result || result.length === 0) {
+      throw new HttpException('No usersfound', 404);
+    }
+    return result;
+  }
+
+  //follow user
+  async followUser(
+    currentUserId: string,
+    userToFollowId: string
+  ): Promise<object> {
+    const user: User = await this.userModel
+      .findByIdAndUpdate(
+        currentUserId,
+        { $addToSet: { followingUsers: userToFollowId } },
+        { new: true }
+      )
+      .lean();
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    //neo4j needs to be implemented here
+    return {
+      statusCode: 201,
+      message: `User ${user.firstName} now follows user with id: ${userToFollowId}`,
+    };
   }
 }

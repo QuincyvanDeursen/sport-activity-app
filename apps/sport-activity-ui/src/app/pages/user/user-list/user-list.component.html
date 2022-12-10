@@ -1,0 +1,62 @@
+<div class="container">
+  <div class="row backgrounddark">
+    <div class="col-12">
+      <h1 class="text-center">Gebruikers</h1>
+    </div>
+    <div class="col -12">
+      <div class="input-group mt-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="zoek op voornaam.."
+          aria-label="Zoek gebruiker"
+          [(ngModel)]="firstNameSearchTerm"
+        />
+        <input
+          type="text"
+          class="form-control"
+          placeholder="zoek op achternaam.."
+          aria-label="Zoek gebruiker"
+          [(ngModel)]="lastNameSearchTerm"
+        />
+      </div>
+    </div>
+    <div class="col-12">
+      <div class="table-responsive mb-5">
+        <table class="table tableborder table-dark">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Voornaam</th>
+              <th scope="col">Achternaam</th>
+              <th scope="col">Stad</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody *ngIf="users.length > 0">
+            <tr *ngFor="let user of filteredUsers; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ user.firstName | titlecase }}</td>
+              <td>{{ user.lastName | titlecase }}</td>
+              <td>{{ user.city | titlecase }}</td>
+              <td>
+                <a
+                  *ngIf="isLoggedIn() && isUser()"
+                  (click)="followUser(user._id)"
+                  class="btn customfriendbutton"
+                >
+                  Volgen
+                </a>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="users.length === 0">
+            <td colspan="5">
+              <h2 class="text-center">Er zijn geen gebruikers gevonden!</h2>
+            </td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

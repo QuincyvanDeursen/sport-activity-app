@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Identity, User } from '@sport-activity-app/domain';
+import { User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
 import { LoginService } from './login.service';
 import { SweetAlert } from '../../shared/HelperMethods/SweetAlert';
@@ -11,7 +11,7 @@ import { SweetAlert } from '../../shared/HelperMethods/SweetAlert';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  identity: Identity = {
+  identity = {
     username: '',
     password: '',
   };

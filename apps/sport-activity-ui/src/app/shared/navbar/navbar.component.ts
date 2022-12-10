@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { User } from '@sport-activity-app/domain';
 import { LoginService } from '../../pages/login/login.service';
 
 @Component({
@@ -8,6 +9,7 @@ import { LoginService } from '../../pages/login/login.service';
 })
 export class NavbarComponent implements OnInit {
   public isMenuCollapsed = true;
+
   constructor(private loginService: LoginService) {}
 
   ngOnInit(): void {
@@ -22,7 +24,7 @@ export class NavbarComponent implements OnInit {
     this.loginService.logout();
   }
 
-  getCurrentUser() {
-    return this.loginService.currentUser;
+  get currentUsername(): string {
+    return this.loginService.currentUser.firstName;
   }
 }

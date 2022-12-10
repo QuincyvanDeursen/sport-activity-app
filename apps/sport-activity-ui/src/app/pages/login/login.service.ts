@@ -1,13 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Identity, User } from '@sport-activity-app/domain';
+import { User } from '@sport-activity-app/domain';
 import { map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { Router } from '@angular/router';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+  }),
 };
 
 @Injectable({
@@ -15,61 +18,41 @@ const httpOptions = {
 })
 export class LoginService {
   jwtHelperService = new JwtHelperService();
-  public currentUser = {
-    id: '',
-    email: '',
-    firstName: '',
-    lastName: '',
-    city: '',
-    roles: [],
-    sportclub: '',
-  };
+  public currentUser!: User;
 
   constructor(private http: HttpClient, private router: Router) {
     if (localStorage.getItem('token')) {
-      const decodedToken = this.jwtHelperService.decodeToken(
+      this.currentUser = this.jwtHelperService.decodeToken(
         localStorage.getItem('token') || ''
       );
-      this.DecodedTokenToUser(decodedToken);
     }
   }
 
   //login request.
-  login(userIdentity: Identity): Observable<any> {
+  login(userIdentity: { username: string; password: string }): Observable<any> {
     const body = JSON.stringify(userIdentity);
     return this.http
       .post<any>(`${environment.SERVER_API_URL}auth/login`, body, httpOptions)
       .pipe(
         map((response: any) => {
-          console.log(response);
-          const decodedToken = this.jwtHelperService.decodeToken(
+          this.currentUser = this.jwtHelperService.decodeToken(
             response.results.access_token
           );
-          this.DecodedTokenToUser(decodedToken);
-          localStorage.setItem('token', response.access_token);
+          localStorage.setItem('token', response.results.access_token);
           return this.currentUser;
         })
       );
   }
 
+  //method to check if a user is logged in.
   loggedIn(): boolean {
     const token = localStorage.getItem('token');
     return !this.jwtHelperService.isTokenExpired(token || '');
   }
 
+  //method to logout a user.
   logout(): void {
     localStorage.removeItem('token');
     this.router.navigate(['/login']);
-  }
-
-  DecodedTokenToUser(decodedToken: any) {
-    console.log('DecodedTokenToUser method called');
-    this.currentUser.id = decodedToken.id;
-    this.currentUser.email = decodedToken.email;
-    this.currentUser.firstName = decodedToken.firstname;
-    this.currentUser.lastName = decodedToken.lastName;
-    this.currentUser.city = decodedToken.city;
-    this.currentUser.roles = decodedToken.roles;
-    this.currentUser.sportclub = decodedToken.sportclub;
   }
 }

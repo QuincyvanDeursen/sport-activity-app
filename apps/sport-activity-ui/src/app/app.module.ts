@@ -11,6 +11,7 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { IntroductionComponent } from './shared/introduction/introduction.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { LoginComponent } from './pages/login/login.component';
+import { UserListComponent } from './pages/user/user-list/user-list.component';
 
 @NgModule({
   declarations: [
@@ -20,6 +21,7 @@ import { LoginComponent } from './pages/login/login.component';
     IntroductionComponent,
     RegisterComponent,
     LoginComponent,
+    UserListComponent,
   ],
   imports: [
     BrowserModule,

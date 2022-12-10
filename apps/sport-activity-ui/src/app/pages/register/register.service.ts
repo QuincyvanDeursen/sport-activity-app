@@ -6,7 +6,10 @@ import { environment } from '../../../environments/environment';
 import { map, Observable } from 'rxjs';
 
 const httpOptions = {
-  headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
+  headers: new HttpHeaders({
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+  }),
 };
 
 @Injectable({

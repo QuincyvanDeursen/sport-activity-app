@@ -28,17 +28,18 @@ export class AuthService {
     return null;
   }
   // This method is called by the auth controller
-  // user is a field in the request (JSON)
+
   async login(user): Promise<object> {
     const result = user.result;
     const payload = {
-      id: result._id,
+      _id: result._id,
       email: result.email,
-      firstname: result.firstName,
+      firstName: result.firstName,
       lastName: result.lastName,
       city: result.city,
       roles: result.roles,
       sportclub: result.sportclub,
+      followingUsers: result.followingUsers,
     };
     console.log('auth service Login method got user data and payload:');
     console.log(user);
@@ -47,5 +48,11 @@ export class AuthService {
       statusCode: 200,
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  getAuthToken(): string {
+    console.log('auth service getAuthToken method called (api)');
+    console.log(localStorage.getItem('token'));
+    return localStorage.getItem('token');
   }
 }

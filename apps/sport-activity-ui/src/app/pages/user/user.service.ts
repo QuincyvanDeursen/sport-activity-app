@@ -7,22 +7,24 @@ import { map, Observable } from 'rxjs';
 const httpOptions = {
   headers: new HttpHeaders({
     'Content-Type': 'application/json',
-    Authorization: `Bearer ${localStorage.getItem('token')}`,
   }),
 };
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    console.log(httpOptions.headers);
+  }
 
   //get all users request
   getAllUsers(): Observable<User[]> {
+    console.log('get all users ui-service called');
+    console.log(httpOptions.headers);
     const result = this.http
       .get<User[]>(`${environment.SERVER_API_URL}user`, httpOptions)
       .pipe(
         map((response: any) => {
-          console.log(response.results.map((user: any) => user));
           return response.results;
         })
       );
@@ -36,6 +38,8 @@ export class UserService {
     currentUserId: string | undefined;
     userToFollowId: string | undefined;
   }): Observable<any> {
+    console.log('follow user ui-service called');
+    console.log(httpOptions.headers);
     const body = JSON.stringify(followRequest);
     const result = this.http
       .post<object>(
@@ -45,12 +49,28 @@ export class UserService {
       )
       .pipe(
         map((response: any) => {
-          console.log(response.results);
           return response.results;
         })
       );
 
-    console.log('follow user ui-service');
+    return result;
+  }
+
+  //delete user request
+  deleteUser(id: string): Observable<any> {
+    console.log('delete user ui-service called');
+    console.log(httpOptions.headers);
+    const result = this.http
+      .delete<object>(
+        `${environment.SERVER_API_URL}user/delete/${id}`,
+        httpOptions
+      )
+      .pipe(
+        map((response: any) => {
+          return response.results;
+        })
+      );
+
     return result;
   }
 }

@@ -1,6 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Role, User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
+import Swal from 'sweetalert2';
 import { SweetAlert } from '../../../shared/HelperMethods/SweetAlert';
 import { LoginService } from '../../login/login.service';
 import { UserService } from '../user.service';
@@ -83,6 +84,55 @@ export class UserListComponent implements OnInit, OnDestroy {
     return this.loginService.currentUser.roles?.includes(Role.User);
   }
 
+  isAdmin(): boolean {
+    return this.loginService.currentUser.roles?.includes(Role.Admin);
+  }
+
+  //confirmation for deleting a user
+  sweetAlertDeleteConfirmation(userId: string | undefined) {
+    console.log(
+      'sweetAlertDeleteConfirmation called from user-list.component.ts'
+    );
+    Swal.fire({
+      title: 'pas op!	',
+      text: 'Weet je zeker dat je deze gebruiker wilt verwijderen?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Verwijderen',
+      cancelButtonText: 'Annuleren',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.deleteUser(userId);
+      }
+    });
+  }
+
+  //delete a user
+  deleteUser(userId: string | undefined) {
+    console.log('deleteUser called from user-list.component.ts');
+    if (userId === undefined) {
+      SweetAlert.showErrorAlert('Er gaat iets mis, probeer het opnieuw..');
+      return;
+    }
+    if (this.loginService.currentUser._id === userId) {
+      SweetAlert.showErrorAlert('Je kan jezelf niet verwijderen');
+      return;
+    }
+    this.userService.deleteUser(userId).subscribe({
+      next: (v) => {
+        this.users = this.users.filter((user) => user._id !== userId);
+        this.filteredUsers = this.filteredUsers.filter(
+          (user) => user._id !== userId
+        );
+        SweetAlert.showSuccessAlert('Gebruiker verwijderd!');
+      },
+      error: (e) => SweetAlert.showErrorAlert(e.error.message),
+      complete: () => console.log('delete user complete (ui)'),
+    });
+  }
+
   //follow a user
   followUser(userToFollowId: string | undefined) {
     console.log('followUser called from user-list.component.ts');
@@ -113,10 +163,7 @@ export class UserListComponent implements OnInit, OnDestroy {
           this.loginService.currentUser.followingUsers?.push(userToFollowId);
           SweetAlert.showSuccessAlert('Je volgt deze gebruiker nu!');
         },
-        error: () =>
-          SweetAlert.showErrorAlert(
-            'Er is iets fout gegaan, probeer het opnieuw..'
-          ),
+        error: (e) => SweetAlert.showErrorAlert(e.error.message),
         complete: () => console.log('follow user complete (ui)'),
       });
   }

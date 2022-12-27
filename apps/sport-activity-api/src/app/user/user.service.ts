@@ -59,12 +59,11 @@ export class UserService {
 
   //getting all users without password (no employees/admins).
   async getAllUsers(): Promise<User[]> {
-    console.log('get all users service');
+    console.log('get all users service (api) called');
     const result: User[] = await this.userModel
       .find({ roles: { $in: ['user'] } })
       .select('-password')
       .lean();
-    console.log(result);
     if (!result || result.length === 0) {
       throw new HttpException('No usersfound', 404);
     }
@@ -90,6 +89,19 @@ export class UserService {
     return {
       statusCode: 201,
       message: `User ${user.firstName} now follows user with id: ${userToFollowId}`,
+    };
+  }
+
+  //delete uesr
+  async deleteUser(_id: string): Promise<object> {
+    console.log('deleteUser from user.service.ts (api) called');
+    const user = await this.userModel.findByIdAndDelete(_id).lean();
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    return {
+      statusCode: 200,
+      message: `User ${user.firstName} deleted`,
     };
   }
 }

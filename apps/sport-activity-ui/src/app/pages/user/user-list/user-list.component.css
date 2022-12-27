@@ -25,3 +25,17 @@
 .table-responsive {
   max-height: 300px;
 }
+
+.customdeletebutton {
+  background-color: #000000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #ff0000;
+}
+
+.customdeletebutton:hover {
+  background-color: #ff0000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #000000;
+}

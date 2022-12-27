@@ -6,6 +6,7 @@ import {
   Get,
   Request,
   Query,
+  Delete,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -62,22 +63,23 @@ export class UserController {
     return result;
   }
 
+  //delete use endpoint
+  @HasRoles(Role.Admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Delete('delete/:id')
+  async deleteUser(@Request() deleteUser): Promise<object> {
+    console.log(deleteUser.params.id);
+    console.log(
+      'Delete user called from user.controller.ts (api) with id: ' +
+        deleteUser.params.id
+    );
+    const result = await this.userService.deleteUser(deleteUser.params.id);
+    return result;
+  }
+
   //profile
   @Get('profile')
   getProfile(@Request() req) {
     return 'werkt';
-  }
-
-  @HasRoles(Role.Employee, Role.Admin)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Get('employee')
-  onlyAdmin(@Request() req) {
-    return req.user;
-  }
-  @HasRoles(Role.User)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Get('test123')
-  onlyUser(@Request() req) {
-    return 'hallo';
   }
 }

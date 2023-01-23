@@ -13,6 +13,7 @@ import { RegisterComponent } from './pages/register/register.component';
 import { LoginComponent } from './pages/login/login.component';
 import { UserListComponent } from './pages/user/user-list/user-list.component';
 import { TokenInterceptorService } from './interceptors/token-interceptor.service';
+import { AccountSettingsComponent } from './pages/user/account-settings/account-settings.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { TokenInterceptorService } from './interceptors/token-interceptor.servic
     RegisterComponent,
     LoginComponent,
     UserListComponent,
+    AccountSettingsComponent,
   ],
   imports: [
     BrowserModule,

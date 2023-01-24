@@ -75,6 +75,7 @@ export class UserService {
     currentUserId: string,
     userToFollowId: string
   ): Promise<object> {
+    console.log('follow user service (api) called');
     const user: User = await this.userModel
       .findByIdAndUpdate(
         currentUserId,
@@ -97,6 +98,7 @@ export class UserService {
     currentUserId: string,
     userToUnfollowId: string
   ): Promise<object> {
+    console.log('unfollow user service (api) called');
     const user: User = await this.userModel
       .findByIdAndUpdate(
         currentUserId,

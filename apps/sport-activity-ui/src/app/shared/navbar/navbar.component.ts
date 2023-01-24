@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+import { User } from '@sport-activity-app/domain';
+import { BehaviorSubject, first, Observable } from 'rxjs';
 import { LoginService } from '../../pages/login/login.service';
 
 @Component({
@@ -10,7 +11,7 @@ import { LoginService } from '../../pages/login/login.service';
 })
 export class NavbarComponent implements OnInit {
   public isMenuCollapsed = true;
-  isLoggedIn?: BehaviorSubject<boolean | undefined>;
+  loggedInUser?: BehaviorSubject<User | undefined>;
 
   /////////////////////////////////////////
   ///////////////  Lifecycle    ///////////
@@ -20,7 +21,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
     console.log('navbar component init');
-    this.isLoggedIn = this.loginService.isLoggedIn;
+    this.loggedInUser = this.loginService.isLoggedIn;
   }
 
   /////////////////////////////////////////
@@ -31,13 +32,5 @@ export class NavbarComponent implements OnInit {
     this.loginService.logout();
     this.router.navigate(['/login']);
     console.log('logged out');
-  }
-
-  /////////////////////////////////////////
-  ///////////////  Getters  ///////////////
-  /////////////////////////////////////////
-
-  get currentUsername(): string {
-    return this.loginService.currentUser.firstName;
   }
 }

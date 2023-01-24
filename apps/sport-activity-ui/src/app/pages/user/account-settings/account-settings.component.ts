@@ -16,20 +16,15 @@ export class AccountSettingsComponent implements OnInit {
   ///////////////  Lifecycle    ///////////
   /////////////////////////////////////////
 
-  constructor(private loginSerivce: LoginService) {}
+  constructor(private loginService: LoginService) {}
 
   ngOnInit(): void {
-    this.currentUser = this.loginSerivce.currentUser;
-    this.isEmployee = this.hasRoleEmployee();
+    this.assignUserData();
   }
 
   /////////////////////////////////////////
   ///////////////  methods      ///////////
   /////////////////////////////////////////
-
-  private hasRoleEmployee(): boolean {
-    return this.currentUser.roles.includes(Role.Employee);
-  }
 
   public updateAccountSettings(): void {
     console.log('Button clicked');
@@ -37,5 +32,21 @@ export class AccountSettingsComponent implements OnInit {
 
   public switchForm(): void {
     this.isAccountForm = !this.isAccountForm;
+  }
+
+  /////////////////////////////////////////
+  ///////////////  User data      /////////
+  /////////////////////////////////////////
+  private assignUserData(): void {
+    if (this.loginService.currentUser) {
+      this.currentUser = this.loginService.currentUser;
+      this.hasRoleEmployee();
+    }
+  }
+
+  private hasRoleEmployee(): void {
+    if (this.currentUser && this.currentUser.roles.includes(Role.Employee)) {
+      this.isEmployee = true;
+    }
   }
 }

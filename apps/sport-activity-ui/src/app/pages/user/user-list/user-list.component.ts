@@ -2,10 +2,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Role, User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
-import { log } from 'util';
 import { SweetAlert } from '../../../shared/HelperMethods/SweetAlert';
 import { LoginService } from '../../login/login.service';
 import { UserService } from '../user.service';
+import { IncludesPipe } from '../../../CustomPipes/IncludePipe';
 
 @Component({
   selector: 'sport-activity-app-user-list',
@@ -21,9 +21,11 @@ export class UserListComponent implements OnInit, OnDestroy {
   private _lastNameSearchTerm = '';
 
   //current user data
-  currentUser = this.loginService.currentUser;
-  isAdmin!: boolean;
-  isUser!: boolean;
+  currentUser!: User;
+  currentlyFollowing: string[] = [];
+  isAlreadyFollowing = false;
+  isAdmin = false;
+  isUser = false;
 
   constructor(
     private userService: UserService,
@@ -31,16 +33,12 @@ export class UserListComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.assignCurrentUser();
     this.getUsers();
-    this.currentUserIsLoggedIn();
-    this.currentUserHasRoleAdmin();
-    this.currentUserHasRoleUser();
   }
 
   ngOnDestroy(): void {
     if (this.subscription) this.subscription.unsubscribe();
-    this.isAdmin = false;
-    this.isUser = false;
     console.log('user-list.component.ts destroyed');
   }
 
@@ -107,7 +105,7 @@ export class UserListComponent implements OnInit, OnDestroy {
       SweetAlert.showErrorAlert('Er gaat iets mis, probeer het opnieuw..');
       return;
     }
-    if (this.loginService.currentUser._id === userId) {
+    if (this.currentUser._id === userId) {
       SweetAlert.showErrorAlert('Je kan jezelf niet verwijderen');
       return;
     }
@@ -152,7 +150,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   //follow a user
   followUser(userToFollowId: string | undefined) {
     console.log('followUser called from user-list.component.ts');
-    const currentUserId = this.loginService.currentUser._id;
+    const currentUserId = this.currentUser._id;
 
     if (currentUserId === undefined || userToFollowId === undefined) {
       SweetAlert.showErrorAlert('Er gaat iets mis, probeer het opnieuw..');
@@ -162,9 +160,7 @@ export class UserListComponent implements OnInit, OnDestroy {
       SweetAlert.showErrorAlert('Je kan jezelf niet volgen');
       return;
     }
-    if (
-      this.loginService.currentUser.followingUsers?.includes(userToFollowId)
-    ) {
+    if (this.currentUser.followingUsers?.includes(userToFollowId)) {
       SweetAlert.showErrorAlert('Je volgt deze gebruiker al');
       return;
     }
@@ -176,7 +172,8 @@ export class UserListComponent implements OnInit, OnDestroy {
       })
       .subscribe({
         next: (v) => {
-          this.loginService.currentUser.followingUsers?.push(userToFollowId);
+          this.currentUser.followingUsers?.push(userToFollowId);
+          this.updateFollowingUsersArrayUpOnFollowing(userToFollowId);
           SweetAlert.showSuccessAlert('Je volgt deze gebruiker nu!');
         },
         error: (e) => SweetAlert.showErrorAlert(e.error.message),
@@ -185,65 +182,66 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   //unfollow a user
-  unfollowUser(userToFollowId: string | undefined) {
+  unfollowUser(userToUnfollowId: string | undefined) {
     console.log('unfollowUser called from user-list.component.ts');
-    const currentUserId = this.loginService.currentUser._id;
+    const currentUserId = this.currentUser._id;
 
-    if (currentUserId === undefined || userToFollowId === undefined) {
+    if (currentUserId === undefined || userToUnfollowId === undefined) {
       SweetAlert.showErrorAlert('Er gaat iets mis, probeer het opnieuw..');
       return;
     }
-    if (currentUserId === userToFollowId) {
+    if (currentUserId === userToUnfollowId) {
       SweetAlert.showErrorAlert('Je kan jezelf niet volgen');
       return;
     }
-    if (
-      this.loginService.currentUser.followingUsers?.includes(userToFollowId)
-    ) {
-      SweetAlert.showErrorAlert('Je volgt deze gebruiker al');
-      return;
-    }
+    if (this.currentUser.followingUsers?.includes(userToUnfollowId)) {
+      this.userService
+        .unfollowUser({
+          currentUserId,
+          userToUnfollowId,
+        })
+        .subscribe({
+          next: () => {
+            this.currentUser.followingUsers = this.currentlyFollowing?.filter(
+              (id) => id !== userToUnfollowId
+            );
 
-    this.userService
-      .followUser({
-        currentUserId,
-        userToFollowId,
-      })
-      .subscribe({
-        next: (v) => {
-          this.loginService.currentUser.followingUsers?.push(userToFollowId);
-          SweetAlert.showSuccessAlert('Je volgt deze gebruiker nu!');
-        },
-        error: (e) => SweetAlert.showErrorAlert(e.error.message),
-        complete: () => console.log('follow user complete (ui)'),
-      });
+            this.currentlyFollowing = this.currentlyFollowing?.filter(
+              (id) => id !== userToUnfollowId
+            );
+            SweetAlert.showSuccessAlert('Je volgt deze gebruiker niet meer!');
+          },
+          error: (e) => SweetAlert.showErrorAlert(e.error.message),
+          complete: () => console.log('unfollow user complete (ui)'),
+        });
+    }
   }
 
-  //check if the current user already follows the other user
-  isFollowing(otherUser: string | undefined): boolean {
-    console.log('isFollowing called from user-list.component.ts');
-    if (otherUser === undefined) {
-      SweetAlert.showErrorAlert('Er gaat iets mis, probeer het opnieuw..');
-      return false;
-    }
-    if (this.currentUser.followingUsers?.includes(otherUser)) {
-      SweetAlert.showSuccessAlert('Je hebt deze gebruiker ontvolgt.');
-      return true;
-    }
-    SweetAlert.showErrorAlert('Er gaat iets mis, probeer het opnieuw..');
-    return false;
+  //this method is needed to trigger change detection for the include pipe.
+  //this will cause the unfollow button to appear after following a user
+  private updateFollowingUsersArrayUpOnFollowing(userToFollowId: string) {
+    this.currentlyFollowing = [];
+    this.currentlyFollowing.push(userToFollowId);
+    this.currentUser.followingUsers?.forEach((user) =>
+      this.currentlyFollowing.push(user)
+    );
   }
 
   ///////////////////////////////////////////////////////////
   //////////       Check current user data   ////////////////
   ///////////////////////////////////////////////////////////
 
-  private currentUserIsLoggedIn(): void {
-    console.log('called1');
+  private assignCurrentUser() {
+    if (this.loginService.currentUser) {
+      this.currentUser = this.loginService.currentUser;
+      this.currentUserHasRoleAdmin();
+      this.currentUserHasRoleUser();
+      if (this.currentUser.followingUsers)
+        this.currentlyFollowing = this.currentUser.followingUsers;
+    }
   }
 
   private currentUserHasRoleUser(): void {
-    console.log('called2');
     if (this.currentUser && this.currentUser.roles?.includes(Role.User)) {
       this.isUser = true;
     } else {
@@ -252,8 +250,6 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   private currentUserHasRoleAdmin(): void {
-    console.log('called3');
-
     if (this.currentUser && this.currentUser.roles?.includes(Role.Admin)) {
       this.isAdmin = true;
     } else {

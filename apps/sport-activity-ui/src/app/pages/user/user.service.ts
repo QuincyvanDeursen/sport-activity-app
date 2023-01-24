@@ -59,7 +59,7 @@ export class UserService {
   //unfollow user request
   unfollowUser(followRequest: {
     currentUserId: string | undefined;
-    userToFollowId: string | undefined;
+    userToUnfollowId: string | undefined;
   }): Observable<any> {
     console.log('unfollow user ui-service called');
     console.log(httpOptions.headers);

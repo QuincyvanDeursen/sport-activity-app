@@ -16,14 +16,15 @@ const httpOptions = {
 })
 export class LoginService {
   jwtHelperService = new JwtHelperService();
-  public currentUser!: User;
-  public isLoggedIn = new BehaviorSubject<boolean | undefined>(undefined);
+  public currentUser?: User;
+  public isLoggedIn = new BehaviorSubject<User | undefined>(undefined);
 
   constructor(private http: HttpClient) {
     if (localStorage.getItem('token')) {
       this.currentUser = this.jwtHelperService.decodeToken(
         localStorage.getItem('token') || ''
       );
+      this.isLoggedIn.next(this.currentUser);
     }
   }
 
@@ -38,7 +39,7 @@ export class LoginService {
             response.results.access_token
           );
           localStorage.setItem('token', response.results.access_token);
-          this.isLoggedIn.next(true);
+          this.isLoggedIn.next(this.currentUser);
           return this.currentUser;
         })
       );
@@ -48,5 +49,6 @@ export class LoginService {
   logout(): void {
     localStorage.removeItem('token');
     this.isLoggedIn.next(undefined);
+    this.currentUser = undefined;
   }
 }

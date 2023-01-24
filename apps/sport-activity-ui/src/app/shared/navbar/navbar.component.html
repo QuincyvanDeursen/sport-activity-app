@@ -34,7 +34,7 @@
         </li>
       </ul>
       <ul class="navbar-nav ms-auto">
-        <li *ngIf="(isLoggedIn | async) === undefined" class="nav-item">
+        <li *ngIf="(loggedInUser | async) === undefined" class="nav-item">
           <a
             class="nav-link"
             routerLink="login"
@@ -42,7 +42,7 @@
             >Login</a
           >
         </li>
-        <li *ngIf="(isLoggedIn | async) === undefined" class="nav-item">
+        <li *ngIf="(loggedInUser | async) === undefined" class="nav-item">
           <a
             class="nav-link"
             routerLink="register"
@@ -50,7 +50,7 @@
             >Registeren</a
           >
         </li>
-        <li *ngIf="isLoggedIn | async">
+        <li *ngIf="loggedInUser | async as user">
           <div ngbDropdown class="d-inline-block">
             <button
               type="button"
@@ -58,7 +58,7 @@
               id="dropdownBasic1"
               ngbDropdownToggle
             >
-              {{ 'Welkom ' + currentUsername | titlecase }}
+              {{ 'Welkom ' + user.firstName | titlecase }}
             </button>
             <div
               ngbDropdownMenu

@@ -39,3 +39,17 @@
   border-radius: 10px;
   border: 1px solid #000000;
 }
+
+.customcancelbutton {
+  background-color: #000000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #edde00;
+}
+
+.customcancelbutton:hover {
+  background-color: #edde00;
+  color: rgb(0, 0, 0);
+  border-radius: 10px;
+  border: 1px solid #000000;
+}

@@ -61,11 +61,14 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post('unfollow')
   async unfollowUser(
-    @Body() followRequest: { currentUserId: string; userToFollowId: string }
+    @Body() followRequest: { currentUserId: string; userToUnfollowId: string }
   ): Promise<object> {
+    console.log(
+      `unfollow user controller (api) called with user to unfollowId: ${followRequest.userToUnfollowId}`
+    );
     const result = await this.userService.unfollowUser(
       followRequest.currentUserId,
-      followRequest.userToFollowId
+      followRequest.userToUnfollowId
     );
     return result;
   }

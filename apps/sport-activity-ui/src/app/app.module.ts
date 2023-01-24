@@ -14,6 +14,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { UserListComponent } from './pages/user/user-list/user-list.component';
 import { TokenInterceptorService } from './interceptors/token-interceptor.service';
 import { AccountSettingsComponent } from './pages/user/account-settings/account-settings.component';
+import { IncludesPipe } from './CustomPipes/IncludePipe';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { AccountSettingsComponent } from './pages/user/account-settings/account-
     LoginComponent,
     UserListComponent,
     AccountSettingsComponent,
+    IncludesPipe,
   ],
   imports: [
     BrowserModule,

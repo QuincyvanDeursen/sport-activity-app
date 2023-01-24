@@ -39,14 +39,31 @@
               <td>{{ user.firstName | titlecase }}</td>
               <td>{{ user.lastName | titlecase }}</td>
               <td>{{ user.city | titlecase }}</td>
-              <td *ngIf="isUser">
-                <a
-                  (click)="followUser(user._id)"
-                  class="btn customfriendbutton"
-                >
-                  Volgen
-                </a>
-              </td>
+              <td
+                *ngIf="
+                  isUser && currentlyFollowing | includes : user._id;
+                  then unfollowTemplate;
+                  else followTemplate
+                "
+              ></td>
+              <ng-template #followTemplate>
+                <td>
+                  <a
+                    (click)="followUser(user._id)"
+                    class="btn customfriendbutton"
+                    >Volgen</a
+                  >
+                </td>
+              </ng-template>
+              <ng-template #unfollowTemplate>
+                <td>
+                  <a
+                    (click)="unfollowUser(user._id)"
+                    class="btn customcancelbutton"
+                    >Ontvolgen</a
+                  >
+                </td>
+              </ng-template>
 
               <td *ngIf="isAdmin">
                 <a

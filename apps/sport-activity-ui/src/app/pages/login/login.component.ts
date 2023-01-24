@@ -42,9 +42,8 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   login() {
     this.subscription = this.loginService.login(this.identity).subscribe({
-      next: (v) => {
+      next: () => {
         console.log('login component next');
-        console.log(v);
         this.router.navigate(['/']);
       },
       error: () =>

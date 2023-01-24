@@ -10,14 +10,24 @@ import { LoginService } from '../../login/login.service';
 export class AccountSettingsComponent implements OnInit {
   currentUser!: User;
   isAccountForm = true;
+  isEmployee = false;
+
+  /////////////////////////////////////////
+  ///////////////  Lifecycle    ///////////
+  /////////////////////////////////////////
 
   constructor(private loginSerivce: LoginService) {}
 
   ngOnInit(): void {
     this.currentUser = this.loginSerivce.currentUser;
+    this.isEmployee = this.hasRoleEmployee();
   }
 
-  public hasRoleEmployee(): boolean {
+  /////////////////////////////////////////
+  ///////////////  methods      ///////////
+  /////////////////////////////////////////
+
+  private hasRoleEmployee(): boolean {
     return this.currentUser.roles.includes(Role.Employee);
   }
 

@@ -56,6 +56,29 @@ export class UserService {
     return result;
   }
 
+  //unfollow user request
+  unfollowUser(followRequest: {
+    currentUserId: string | undefined;
+    userToFollowId: string | undefined;
+  }): Observable<any> {
+    console.log('unfollow user ui-service called');
+    console.log(httpOptions.headers);
+    const body = JSON.stringify(followRequest);
+    const result = this.http
+      .post<object>(
+        `${environment.SERVER_API_URL}user/unfollow`,
+        body,
+        httpOptions
+      )
+      .pipe(
+        map((response: any) => {
+          return response.results;
+        })
+      );
+
+    return result;
+  }
+
   //delete user request
   deleteUser(id: string): Observable<any> {
     console.log('delete user ui-service called');

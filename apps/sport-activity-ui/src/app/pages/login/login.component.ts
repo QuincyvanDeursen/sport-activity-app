@@ -20,9 +20,25 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   subscription!: Subscription;
 
+  /////////////////////////////////////////
+  ///////////////  Lifecycle    ///////////
+  /////////////////////////////////////////
+
   constructor(private loginService: LoginService, private router: Router) {}
 
   ngOnInit(): void {}
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+
+    console.log('login component destroyed');
+  }
+
+  /////////////////////////////////////////
+  ///////////////  methods      ///////////
+  /////////////////////////////////////////
 
   login() {
     this.subscription = this.loginService.login(this.identity).subscribe({
@@ -36,13 +52,5 @@ export class LoginComponent implements OnInit, OnDestroy {
 
       complete: () => console.log('login complete'),
     });
-  }
-
-  ngOnDestroy() {
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-
-    console.log('login component destroyed');
   }
 }

@@ -7,6 +7,9 @@ import { Role, User } from '@sport-activity-app/domain';
   styleUrls: ['./introduction.component.css'],
 })
 export class IntroductionComponent implements OnInit {
+  /////////////////////////////////////////
+  ///////////////  Lifecycle    ///////////
+  /////////////////////////////////////////
   constructor() {}
 
   ngOnInit(): void {}

@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User } from '@sport-activity-app/domain';
-import { map, Observable } from 'rxjs';
+import { BehaviorSubject, map, Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Router } from '@angular/router';
 
 const httpOptions = {
   headers: new HttpHeaders({
@@ -18,8 +17,9 @@ const httpOptions = {
 export class LoginService {
   jwtHelperService = new JwtHelperService();
   public currentUser!: User;
+  public isLoggedIn = new BehaviorSubject<boolean | undefined>(undefined);
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(private http: HttpClient) {
     if (localStorage.getItem('token')) {
       this.currentUser = this.jwtHelperService.decodeToken(
         localStorage.getItem('token') || ''
@@ -38,20 +38,15 @@ export class LoginService {
             response.results.access_token
           );
           localStorage.setItem('token', response.results.access_token);
+          this.isLoggedIn.next(true);
           return this.currentUser;
         })
       );
   }
 
-  //method to check if a user is logged in.
-  loggedIn(): boolean {
-    const token = localStorage.getItem('token');
-    return !this.jwtHelperService.isTokenExpired(token || '');
-  }
-
   //method to logout a user.
   logout(): void {
     localStorage.removeItem('token');
-    this.router.navigate(['/login']);
+    this.isLoggedIn.next(undefined);
   }
 }

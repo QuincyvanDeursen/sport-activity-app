@@ -42,13 +42,6 @@ export class UserController {
     return result;
   }
 
-  //get user by email endpoint
-  @Get(':email')
-  async getUserByEmail(@Request() req): Promise<User> {
-    const result = await this.userService.findUserByEmail(req.params.email);
-    return result;
-  }
-
   //follow user endpoint
   @HasRoles(Role.User)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
@@ -57,6 +50,20 @@ export class UserController {
     @Body() followRequest: { currentUserId: string; userToFollowId: string }
   ): Promise<object> {
     const result = await this.userService.followUser(
+      followRequest.currentUserId,
+      followRequest.userToFollowId
+    );
+    return result;
+  }
+
+  //unfollow user endpoint
+  @HasRoles(Role.User)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Post('unfollow')
+  async unfollowUser(
+    @Body() followRequest: { currentUserId: string; userToFollowId: string }
+  ): Promise<object> {
+    const result = await this.userService.unfollowUser(
       followRequest.currentUserId,
       followRequest.userToFollowId
     );

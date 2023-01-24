@@ -92,6 +92,28 @@ export class UserService {
     };
   }
 
+  //unfollow user
+  async unfollowUser(
+    currentUserId: string,
+    userToUnfollowId: string
+  ): Promise<object> {
+    const user: User = await this.userModel
+      .findByIdAndUpdate(
+        currentUserId,
+        { $pull: { followingUsers: userToUnfollowId } },
+        { new: true }
+      )
+      .lean();
+    if (!user) {
+      throw new HttpException('User not found', 404);
+    }
+    //neo4j needs to be implemented here
+    return {
+      statusCode: 201,
+      message: `User ${user.firstName} now no longer follows user with id: ${userToUnfollowId}`,
+    };
+  }
+
   //delete uesr
   async deleteUser(_id: string): Promise<object> {
     console.log('deleteUser from user.service.ts (api) called');

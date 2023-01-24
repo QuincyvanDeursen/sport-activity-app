@@ -1,9 +1,6 @@
 <div class="container">
   <div class="row backgrounddark">
-    <div
-      *ngIf="hasRoleEmployee()"
-      class="col-12 d-flex justify-content-center my-3"
-    >
+    <div *ngIf="isEmployee" class="col-12 d-flex justify-content-center mt-3">
       <div class="btn-group" role="group" aria-label="Basic example">
         <button
           type="button"

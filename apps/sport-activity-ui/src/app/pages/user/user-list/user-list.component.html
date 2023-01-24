@@ -30,7 +30,7 @@
               <th scope="col">Voornaam</th>
               <th scope="col">Achternaam</th>
               <th scope="col">Stad</th>
-              <th *ngIf="isUser() || isAdmin()" scope="col"></th>
+              <th *ngIf="isUser || isAdmin" scope="col"></th>
             </tr>
           </thead>
           <tbody *ngIf="users.length > 0">
@@ -39,7 +39,7 @@
               <td>{{ user.firstName | titlecase }}</td>
               <td>{{ user.lastName | titlecase }}</td>
               <td>{{ user.city | titlecase }}</td>
-              <td *ngIf="isLoggedIn() && isUser()">
+              <td *ngIf="isUser">
                 <a
                   (click)="followUser(user._id)"
                   class="btn customfriendbutton"
@@ -47,7 +47,8 @@
                   Volgen
                 </a>
               </td>
-              <td *ngIf="isLoggedIn() && isAdmin()">
+
+              <td *ngIf="isAdmin">
                 <a
                   (click)="sweetAlertDeleteConfirmation(user._id)"
                   class="btn customdeletebutton"

@@ -5,7 +5,6 @@ import Swal from 'sweetalert2';
 import { SweetAlert } from '../../../shared/HelperMethods/SweetAlert';
 import { LoginService } from '../../login/login.service';
 import { UserService } from '../user.service';
-import { IncludesPipe } from '../../../CustomPipes/IncludePipe';
 
 @Component({
   selector: 'sport-activity-app-user-list',
@@ -22,7 +21,7 @@ export class UserListComponent implements OnInit, OnDestroy {
 
   //current user data
   currentUser!: User;
-  currentlyFollowing: string[] = [];
+  currentlyFollowing?: string[];
   isAlreadyFollowing = false;
   isAdmin = false;
   isUser = false;
@@ -86,6 +85,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   getUsers() {
     this.subscription = this.userService.getAllUsers().subscribe({
       next: (v) => {
+        console.log(v);
         this.users = v;
         this.filteredUsers = v;
       },
@@ -220,11 +220,9 @@ export class UserListComponent implements OnInit, OnDestroy {
   //this method is needed to trigger change detection for the include pipe.
   //this will cause the unfollow button to appear after following a user
   private updateFollowingUsersArrayUpOnFollowing(userToFollowId: string) {
-    this.currentlyFollowing = [];
-    this.currentlyFollowing.push(userToFollowId);
-    this.currentUser.followingUsers?.forEach((user) =>
-      this.currentlyFollowing.push(user)
-    );
+    if (this.currentlyFollowing !== undefined) {
+      this.currentlyFollowing = [...this.currentlyFollowing, userToFollowId];
+    }
   }
 
   ///////////////////////////////////////////////////////////
@@ -236,8 +234,9 @@ export class UserListComponent implements OnInit, OnDestroy {
       this.currentUser = this.loginService.currentUser;
       this.currentUserHasRoleAdmin();
       this.currentUserHasRoleUser();
-      if (this.currentUser.followingUsers)
-        this.currentlyFollowing = this.currentUser.followingUsers;
+      console.log('4');
+      console.log(this.currentUser.followingUsers);
+      this.currentlyFollowing = this.currentUser.followingUsers;
     }
   }
 

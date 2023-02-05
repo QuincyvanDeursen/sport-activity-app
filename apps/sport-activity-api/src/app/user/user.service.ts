@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { User } from '@sport-activity-app/domain';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { UserDocument } from '../Schemas/user.schema';
 
 @Injectable()
@@ -116,10 +116,13 @@ export class UserService {
     };
   }
 
-  //delete uesr
+  //delete user
   async deleteUser(_id: string): Promise<object> {
     console.log('deleteUser from user.service.ts (api) called');
     const user = await this.userModel.findByIdAndDelete(_id).lean();
+    await this.userModel
+      .updateMany({}, { $pull: { followingUsers: _id } })
+      .lean();
     if (!user) {
       throw new HttpException('User not found', 404);
     }

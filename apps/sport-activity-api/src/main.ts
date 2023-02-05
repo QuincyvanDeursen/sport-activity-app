@@ -15,7 +15,7 @@ async function bootstrap() {
   app.setGlobalPrefix(globalPrefix);
   app.useGlobalInterceptors(new ApiResponseInterceptor());
 
-  const port = process.env.PORT || 3333;
+  const port = process.env.PORT || 3335;
   await app.listen(port);
   Logger.log(
     `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`

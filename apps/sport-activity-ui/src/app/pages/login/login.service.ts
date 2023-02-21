@@ -17,6 +17,7 @@ const httpOptions = {
 export class LoginService {
   jwtHelperService = new JwtHelperService();
   public currentUser?: User;
+  public userIdentity?: { username: string; password: string };
   public isLoggedIn = new BehaviorSubject<User | undefined>(undefined);
 
   constructor(private http: HttpClient) {
@@ -40,6 +41,7 @@ export class LoginService {
           );
           localStorage.setItem('token', response.results.access_token);
           this.isLoggedIn.next(this.currentUser);
+          this.userIdentity = userIdentity;
           return this.currentUser;
         })
       );

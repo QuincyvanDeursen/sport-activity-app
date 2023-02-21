@@ -96,4 +96,24 @@ export class UserService {
 
     return result;
   }
+
+  //update account settings request
+  updateAccountSettings(user: User): Observable<any> {
+    console.log('update account settings ui-service called');
+    console.log(httpOptions.headers);
+    const body = JSON.stringify(user);
+    const result = this.http
+      .put<object>(
+        `${environment.SERVER_API_URL}user/accountsettings`,
+        body,
+        httpOptions
+      )
+      .pipe(
+        map((response: any) => {
+          return response.results;
+        })
+      );
+
+    return result;
+  }
 }

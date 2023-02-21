@@ -1,25 +1,46 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Role, User } from '@sport-activity-app/domain';
 import { LoginService } from '../../login/login.service';
+import { UserService } from '../user.service';
+import { SweetAlert } from '../../../shared/HelperMethods/SweetAlert';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'sport-activity-app-account-settings',
   templateUrl: './account-settings.component.html',
   styleUrls: ['./account-settings.component.css'],
 })
-export class AccountSettingsComponent implements OnInit {
-  currentUser!: User;
-  isAccountForm = true;
+export class AccountSettingsComponent implements OnInit, OnDestroy {
+  updateAccountSettingsSubscription?: Subscription;
+  loginSubscription?: Subscription;
+
+  newUserData!: User;
+  isUser = true;
   isEmployee = false;
 
   /////////////////////////////////////////
   ///////////////  Lifecycle    ///////////
   /////////////////////////////////////////
 
-  constructor(private loginService: LoginService) {}
+  constructor(
+    private loginService: LoginService,
+    private userService: UserService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.assignUserData();
+  }
+
+  ngOnDestroy() {
+    console.log('account settings component destroyed');
+    if (this.updateAccountSettingsSubscription) {
+      this.updateAccountSettingsSubscription.unsubscribe();
+    }
+    if (this.loginSubscription) {
+      this.loginSubscription.unsubscribe();
+    }
   }
 
   /////////////////////////////////////////
@@ -27,11 +48,19 @@ export class AccountSettingsComponent implements OnInit {
   /////////////////////////////////////////
 
   public updateAccountSettings(): void {
-    console.log('Button clicked');
+    console.log('update account settings');
+    this.userService.updateAccountSettings(this.newUserData).subscribe({
+      next: (v) => {
+        SweetAlert.showSuccessAlert('Je account is succesvol aangepast!');
+        this.refreshCurrentUser();
+      },
+      error: (e) => SweetAlert.showErrorAlert(e.error.message),
+      complete: () => console.log('update account settings complete (ui)'),
+    });
   }
 
   public switchForm(): void {
-    this.isAccountForm = !this.isAccountForm;
+    this.isUser = !this.isUser;
   }
 
   /////////////////////////////////////////
@@ -39,14 +68,35 @@ export class AccountSettingsComponent implements OnInit {
   /////////////////////////////////////////
   private assignUserData(): void {
     if (this.loginService.currentUser) {
-      this.currentUser = this.loginService.currentUser;
+      this.newUserData = { ...this.loginService.currentUser };
       this.hasRoleEmployee();
+      this.newUserData.password =
+        this.loginService.userIdentity?.password || '';
     }
+    console.log('new user data', this.newUserData);
   }
 
   private hasRoleEmployee(): void {
-    if (this.currentUser && this.currentUser.roles.includes(Role.Employee)) {
+    if (this.newUserData && this.newUserData.roles.includes(Role.Employee)) {
       this.isEmployee = true;
     }
+  }
+
+  private refreshCurrentUser(): void {
+    const identity = {
+      username: this.newUserData.email,
+      password: this.newUserData.password,
+    };
+    this.loginSubscription = this.loginService.login(identity).subscribe({
+      next: () => {
+        console.log('login component next');
+        this.assignUserData();
+      },
+      error: () =>
+        SweetAlert.showErrorAlert('Ongeldig email en wachtwoord combinatie'),
+      complete: () => {
+        console.log('login complete'), this.router.navigate(['/']);
+      },
+    });
   }
 }

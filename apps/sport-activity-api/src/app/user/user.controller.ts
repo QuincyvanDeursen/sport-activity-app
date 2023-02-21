@@ -7,6 +7,7 @@ import {
   Request,
   Query,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
@@ -91,5 +92,15 @@ export class UserController {
   @Get('profile')
   getProfile(@Request() req) {
     return 'werkt';
+  }
+
+  //update account settings endpoint
+  @HasRoles(Role.User, Role.Employee)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Put('accountsettings')
+  async updateAccountSettings(@Body() user: User): Promise<object> {
+    console.log('update account settings called from user.controller.ts (api)');
+    const result = await this.userService.updateAccountSettings(user);
+    return result;
   }
 }

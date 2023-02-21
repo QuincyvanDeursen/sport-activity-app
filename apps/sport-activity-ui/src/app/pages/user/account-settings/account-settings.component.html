@@ -1,10 +1,10 @@
-<div *ngIf="currentUser" class="container">
+<div *ngIf="newUserData" class="container">
   <div class="row backgrounddark">
     <div *ngIf="isEmployee" class="col-12 d-flex justify-content-center mt-3">
       <div class="btn-group" role="group" aria-label="Basic example">
         <button
           type="button"
-          *ngIf="isAccountForm"
+          *ngIf="isUser"
           (click)="switchForm()"
           class="btn selectbutton"
         >
@@ -12,7 +12,7 @@
         </button>
         <button
           type="button"
-          *ngIf="!isAccountForm"
+          *ngIf="!isUser"
           (click)="switchForm()"
           class="btn selectbutton"
         >
@@ -22,7 +22,7 @@
     </div>
 
     <!-- Account form -->
-    <div class="col-12 text-center" *ngIf="isAccountForm">
+    <div class="col-12 text-center" *ngIf="isUser">
       <div class="mt-3">
         <h1 class="text-center">Account Gegevens</h1>
       </div>
@@ -39,7 +39,7 @@
               type="text"
               name="firstName"
               class="form-control"
-              [(ngModel)]="currentUser.firstName"
+              [(ngModel)]="newUserData.firstName"
               #firstName="ngModel"
               required
             />
@@ -61,7 +61,7 @@
               name="lastName"
               class="form-control"
               placeholder="Klaasen"
-              [(ngModel)]="currentUser.lastName"
+              [(ngModel)]="newUserData.lastName"
               #lastName="ngModel"
               required
             />
@@ -81,7 +81,7 @@
               name="email"
               class="form-control"
               placeholder="johndoe@gmail.com"
-              [(ngModel)]="currentUser.email"
+              [(ngModel)]="newUserData.email"
               #email="ngModel"
               required
             />
@@ -101,7 +101,7 @@
               name="city"
               class="form-control"
               placeholder="Breda"
-              [(ngModel)]="currentUser.city"
+              [(ngModel)]="newUserData.city"
               #city="ngModel"
               required
             />
@@ -120,7 +120,7 @@
               name="password"
               class="form-control"
               placeholder="********"
-              [(ngModel)]="currentUser.password"
+              [(ngModel)]="newUserData.password"
               #password="ngModel"
               minlength="8"
               required
@@ -156,11 +156,11 @@
     </div>
     <!-- club form -->
 
-    <div class="col-12 text-center" *ngIf="!isAccountForm">
+    <div class="col-12 text-center" *ngIf="!isUser">
       <div class="mt-3">
         <h1 class="text-center">Sportclub Gegevens</h1>
       </div>
-      <form #clubForm="ngForm">
+      <form #clubForm="ngForm" (ngSubmit)="updateAccountSettings()">
         <div>
           <div class="col">
             <label for="clubName">Naam sportclub</label>
@@ -169,7 +169,7 @@
               name="clubName"
               class="form-control"
               placeholder="De Sportclub"
-              [(ngModel)]="currentUser.sportclub!.clubName"
+              [(ngModel)]="newUserData.sportclub!.clubName"
               #clubName="ngModel"
               required
             />
@@ -191,7 +191,7 @@
               name="website"
               class="form-control"
               placeholder="www.jouwwebsite.nl"
-              [(ngModel)]="currentUser.sportclub!.websiteURL"
+              [(ngModel)]="newUserData.sportclub!.websiteURL"
               #website="ngModel"
               required
             />
@@ -213,7 +213,7 @@
               name="companyEmail"
               class="form-control"
               placeholder="jouwbedrijf@company.nl"
-              [(ngModel)]="currentUser.sportclub!.email"
+              [(ngModel)]="newUserData.sportclub!.email"
               #companyEmail="ngModel"
               required
             />
@@ -238,7 +238,7 @@
               name="phonenumber"
               class="form-control"
               placeholder="0761234567"
-              [(ngModel)]="currentUser.sportclub!.phoneNumber"
+              [(ngModel)]="newUserData.sportclub!.phoneNumber"
               #phonenumber="ngModel"
               required
             />
@@ -263,7 +263,7 @@
               name="clubCity"
               class="form-control"
               placeholder="Breda"
-              [(ngModel)]="currentUser.sportclub!.address.city"
+              [(ngModel)]="newUserData.sportclub!.address.city"
               #clubCity="ngModel"
               required
             />
@@ -285,7 +285,7 @@
               name="zipcode"
               class="form-control"
               placeholder="1234AB"
-              [(ngModel)]="currentUser.sportclub!.address.zipCode"
+              [(ngModel)]="newUserData.sportclub!.address.zipCode"
               #zipcode="ngModel"
               length="6"
               required
@@ -311,7 +311,7 @@
               name="street"
               class="form-control"
               placeholder="waterviolier"
-              [(ngModel)]="currentUser.sportclub!.address.street"
+              [(ngModel)]="newUserData.sportclub!.address.street"
               #street="ngModel"
               required
             />
@@ -333,7 +333,7 @@
               name="Housenumber"
               class="form-control"
               placeholder="105A"
-              [(ngModel)]="currentUser.sportclub!.address.houseNumber"
+              [(ngModel)]="newUserData.sportclub!.address.houseNumber"
               #Housenumber="ngModel"
               required
             />

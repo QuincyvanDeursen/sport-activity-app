@@ -131,4 +131,30 @@ export class UserService {
       message: `User ${user.firstName} deleted`,
     };
   }
+
+  //update account settings (user)
+  async updateAccountSettings(newUser: User): Promise<object> {
+    try {
+      const userUpdateResult = await this.userModel
+        .findByIdAndUpdate(newUser._id, { $set: newUser }, { new: true })
+        .lean();
+      if (!userUpdateResult) {
+        throw new HttpException('User not found', 404);
+      }
+      console.log('userUpdateResult: ', userUpdateResult);
+      return {
+        statusCode: 200,
+        message: `User with id: ${newUser._id} updated`,
+      };
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new HttpException(
+          'Duplicate entry, email has to be unique.',
+          409
+        );
+      } else {
+        throw new HttpException(error.message, 400);
+      }
+    }
+  }
 }

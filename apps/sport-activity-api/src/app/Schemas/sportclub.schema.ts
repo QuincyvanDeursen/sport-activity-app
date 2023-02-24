@@ -17,4 +17,4 @@ export class Sportclub {
   @Prop({ required: true })
   address: Address;
 }
-export const UserSchema = SchemaFactory.createForClass(Sportclub);
+export const SportclubSchema = SchemaFactory.createForClass(Sportclub);

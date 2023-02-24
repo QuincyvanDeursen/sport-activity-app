@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { User } from '@sport-activity-app/domain';
 import { InjectModel } from '@nestjs/mongoose';
-import mongoose, { Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { UserDocument } from '../Schemas/user.schema';
 
 @Injectable()
@@ -138,10 +138,10 @@ export class UserService {
       const userUpdateResult = await this.userModel
         .findByIdAndUpdate(newUser._id, { $set: newUser }, { new: true })
         .lean();
+
       if (!userUpdateResult) {
         throw new HttpException('User not found', 404);
       }
-      console.log('userUpdateResult: ', userUpdateResult);
       return {
         statusCode: 200,
         message: `User with id: ${newUser._id} updated`,

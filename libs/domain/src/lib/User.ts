@@ -11,4 +11,5 @@ export interface User {
   roles: Role[];
   sportclub?: Sportclub;
   followingUsers?: string[];
+  enrolledSportEvents?: string[];
 }

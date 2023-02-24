@@ -28,5 +28,14 @@ export class User {
     ref: 'User',
   })
   followingUsers: [];
+
+  @Prop({
+    required: false,
+    default: [],
+    type: [mongoose.Schema.Types.ObjectId],
+    ref: 'SportEvent',
+  })
+  enrolledSportEvents: [];
 }
+
 export const UserSchema = SchemaFactory.createForClass(User);

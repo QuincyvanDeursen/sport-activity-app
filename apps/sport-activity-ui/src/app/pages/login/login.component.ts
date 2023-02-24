@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { Identity, User } from '@sport-activity-app/domain';
+import { User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
 import { LoginService } from './login.service';
 import { SweetAlert } from '../../shared/HelperMethods/SweetAlert';
@@ -11,7 +11,7 @@ import { SweetAlert } from '../../shared/HelperMethods/SweetAlert';
   styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit, OnDestroy {
-  identity: Identity = {
+  identity = {
     username: '',
     password: '',
   };
@@ -20,23 +20,13 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   subscription!: Subscription;
 
+  /////////////////////////////////////////
+  ///////////////  Lifecycle    ///////////
+  /////////////////////////////////////////
+
   constructor(private loginService: LoginService, private router: Router) {}
 
   ngOnInit(): void {}
-
-  login() {
-    this.subscription = this.loginService.login(this.identity).subscribe({
-      next: (v) => {
-        console.log('login component next');
-        console.log(v);
-        this.router.navigate(['/']);
-      },
-      error: () =>
-        SweetAlert.showErrorAlert('Ongeldig email en wachtwoord combinatie'),
-
-      complete: () => console.log('login complete'),
-    });
-  }
 
   ngOnDestroy() {
     if (this.subscription) {
@@ -44,5 +34,22 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     console.log('login component destroyed');
+  }
+
+  /////////////////////////////////////////
+  ///////////////  methods      ///////////
+  /////////////////////////////////////////
+
+  login() {
+    this.subscription = this.loginService.login(this.identity).subscribe({
+      next: () => {
+        console.log('login component next');
+        this.router.navigate(['/']);
+      },
+      error: () =>
+        SweetAlert.showErrorAlert('Ongeldig email en wachtwoord combinatie'),
+
+      complete: () => console.log('login complete'),
+    });
   }
 }

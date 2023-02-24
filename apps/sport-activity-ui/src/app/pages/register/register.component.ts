@@ -36,6 +36,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
     },
   };
 
+  /////////////////////////////////////////////////
+  //////////       Lifecycle      ////////////////
+  /////////////////////////////////////////////////
+
   constructor(
     private registerService: RegisterService,
     private router: Router
@@ -49,6 +53,10 @@ export class RegisterComponent implements OnInit, OnDestroy {
       this.subscription.unsubscribe();
     }
   }
+
+  /////////////////////////////////////////////////
+  //////////       Methods         ////////////////
+  /////////////////////////////////////////////////
 
   //register a user
   register() {

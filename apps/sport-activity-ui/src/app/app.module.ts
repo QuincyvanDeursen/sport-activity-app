@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { RouterModule } from '@angular/router';
@@ -11,6 +11,10 @@ import { FooterComponent } from './shared/footer/footer.component';
 import { IntroductionComponent } from './shared/introduction/introduction.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { LoginComponent } from './pages/login/login.component';
+import { UserListComponent } from './pages/user/user-list/user-list.component';
+import { TokenInterceptorService } from './interceptors/token-interceptor.service';
+import { AccountSettingsComponent } from './pages/user/account-settings/account-settings.component';
+import { IncludesPipe } from './CustomPipes/IncludePipe';
 
 @NgModule({
   declarations: [
@@ -20,6 +24,9 @@ import { LoginComponent } from './pages/login/login.component';
     IntroductionComponent,
     RegisterComponent,
     LoginComponent,
+    UserListComponent,
+    AccountSettingsComponent,
+    IncludesPipe,
   ],
   imports: [
     BrowserModule,
@@ -28,7 +35,13 @@ import { LoginComponent } from './pages/login/login.component';
     NgbModule,
     FormsModule,
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptorService,
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

@@ -1,4 +1,5 @@
-import { User } from './User';
+import { Sportclub } from './Sportclub';
+
 export interface SportEvent {
   _id?: string;
   title: string;
@@ -8,5 +9,6 @@ export interface SportEvent {
   durationInMinutes: number;
   maximumNumberOfParticipants: number;
   enrolledParticipants?: string[];
-  host: User;
+  hostId: string;
+  sportclub: Sportclub;
 }

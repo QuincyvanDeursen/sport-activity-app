@@ -1,0 +1,71 @@
+<div class="container">
+  <div class="row backgrounddark">
+    <div class="col-12">
+      <h1 class="text-center">Sport Evenementen</h1>
+    </div>
+    <!-- Search bar -->
+    <div class="col-12">
+      <div class="input-group mt-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="zoek op titel.."
+          aria-label="Zoek op titel"
+          [(ngModel)]="sportEventTitle"
+        />
+        <input
+          type="text"
+          class="form-control"
+          placeholder="zoek op stad.."
+          aria-label="Zoek op stad"
+          [(ngModel)]="sportEventCity"
+        />
+      </div>
+    </div>
+    <!-- Table -->
+    <div class="col-12">
+      <div class="table-responsive mb-5">
+        <table class="table tableborder table-dark">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Titel</th>
+              <th scope="col">Locatie</th>
+              <th scope="col">Prijs</th>
+              <th scope="col">Datum</th>
+              <th scope="col">Deelnemers</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody *ngIf="sportEvents.length > 0">
+            <tr *ngFor="let sportEvent of filteredSportEvents; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ sportEvent.title | titlecase }}</td>
+              <td>{{ sportEvent.sportclub.address.city | titlecase }}</td>
+              <td>€{{ sportEvent.price }}</td>
+              <td>{{ sportEvent.startDateAndTime }}</td>
+              <td>
+                {{ sportEvent.enrolledParticipants?.length }}/{{
+                  sportEvent.maximumNumberOfParticipants
+                }}
+              </td>
+              <td>
+                <a
+                  routerLink="{{ sportEvent._id }}"
+                  class="btn customdetailbutton"
+                >
+                  Bekijken
+                </a>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="sportEvents.length === 0">
+            <td colspan="5">
+              <h2 class="text-center">Er zijn geen Evenementen gevonden!</h2>
+            </td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

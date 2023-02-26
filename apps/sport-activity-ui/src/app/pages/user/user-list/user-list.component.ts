@@ -234,8 +234,6 @@ export class UserListComponent implements OnInit, OnDestroy {
       this.currentUser = this.loginService.currentUser;
       this.currentUserHasRoleAdmin();
       this.currentUserHasRoleUser();
-      console.log('4');
-      console.log(this.currentUser.followingUsers);
       this.currentlyFollowing = this.currentUser.followingUsers;
     }
   }

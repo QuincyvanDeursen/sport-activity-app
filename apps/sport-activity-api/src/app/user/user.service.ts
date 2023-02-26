@@ -3,11 +3,14 @@ import { User } from '@sport-activity-app/domain';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDocument } from '../Schemas/user.schema';
+import { SportEventDocument } from '../Schemas/sportEvent.schema';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel('User') private readonly userModel: Model<UserDocument>
+    @InjectModel('User') private readonly userModel: Model<UserDocument>,
+    @InjectModel('SportEvent')
+    private readonly sportEventModel: Model<SportEventDocument>
   ) {}
 
   //creating a user.
@@ -119,17 +122,27 @@ export class UserService {
   //delete user
   async deleteUser(_id: string): Promise<object> {
     console.log('deleteUser from user.service.ts (api) called');
-    const user = await this.userModel.findByIdAndDelete(_id).lean();
-    await this.userModel
-      .updateMany({}, { $pull: { followingUsers: _id } })
-      .lean();
-    if (!user) {
-      throw new HttpException('User not found', 404);
+    try {
+      const user = await this.userModel.findByIdAndDelete(_id).lean();
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+
+      //delete all references to user in other collections
+      await this.userModel
+        .updateMany({}, { $pull: { followingUsers: _id } })
+        .lean();
+      await this.sportEventModel
+        .updateMany({}, { $pull: { enrolledParticipants: _id } })
+        .lean();
+
+      return {
+        statusCode: 200,
+        message: `User ${user.firstName} deleted`,
+      };
+    } catch (error) {
+      throw new HttpException(error.message, 400);
     }
-    return {
-      statusCode: 200,
-      message: `User ${user.firstName} deleted`,
-    };
   }
 
   //update account settings (user)

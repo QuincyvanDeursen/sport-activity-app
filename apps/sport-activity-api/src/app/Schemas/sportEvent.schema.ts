@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 import mongoose, { HydratedDocument } from 'mongoose';
-import { User } from './user.schema';
+import { Sportclub } from './sportclub.schema';
 export type SportEventDocument = HydratedDocument<SportEvent>;
 
 @Schema()
@@ -26,6 +26,8 @@ export class SportEvent {
   })
   enrolledParticipants: [];
   @Prop({ required: true })
-  host: User;
+  hostId: mongoose.Schema.Types.ObjectId;
+  @Prop({ required: true })
+  sportclub: Sportclub;
 }
 export const SportEventSchema = SchemaFactory.createForClass(SportEvent);

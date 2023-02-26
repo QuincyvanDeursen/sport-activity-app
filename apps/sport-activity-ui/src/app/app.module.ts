@@ -15,6 +15,9 @@ import { UserListComponent } from './pages/user/user-list/user-list.component';
 import { TokenInterceptorService } from './interceptors/token-interceptor.service';
 import { AccountSettingsComponent } from './pages/user/account-settings/account-settings.component';
 import { IncludesPipe } from './CustomPipes/IncludePipe';
+import { SportEventListComponent } from './pages/sport-event/sport-event-list/sport-event-list.component';
+import { SportEventDetailComponent } from './pages/sport-event/sport-event-detail/sport-event-detail.component';
+import { SportEventColumnsComponent } from './pages/sport-event/sport-event-columns/sport-event-columns.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +30,9 @@ import { IncludesPipe } from './CustomPipes/IncludePipe';
     UserListComponent,
     AccountSettingsComponent,
     IncludesPipe,
+    SportEventListComponent,
+    SportEventDetailComponent,
+    SportEventColumnsComponent,
   ],
   imports: [
     BrowserModule,

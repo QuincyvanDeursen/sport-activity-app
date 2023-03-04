@@ -18,6 +18,7 @@ import { IncludesPipe } from './CustomPipes/IncludePipe';
 import { SportEventListComponent } from './pages/sport-event/sport-event-list/sport-event-list.component';
 import { SportEventDetailComponent } from './pages/sport-event/sport-event-detail/sport-event-detail.component';
 import { SportEventColumnsComponent } from './pages/sport-event/sport-event-columns/sport-event-columns.component';
+import { SportEventCreateComponent } from './pages/sport-event/sport-event-create/sport-event-create.component';
 
 @NgModule({
   declarations: [
@@ -33,6 +34,7 @@ import { SportEventColumnsComponent } from './pages/sport-event/sport-event-colu
     SportEventListComponent,
     SportEventDetailComponent,
     SportEventColumnsComponent,
+    SportEventCreateComponent,
   ],
   imports: [
     BrowserModule,

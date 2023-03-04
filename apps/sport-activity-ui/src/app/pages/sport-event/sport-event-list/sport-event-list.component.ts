@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { Role, SportEvent, User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
@@ -27,10 +28,12 @@ export class SportEventListComponent implements OnInit {
   currentUser!: User;
   isAdmin = false;
   isUser = false;
+  isEmployee = false;
 
   constructor(
     private loginService: LoginService,
-    private sportEventService: SportEventService
+    private sportEventService: SportEventService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -157,6 +160,7 @@ export class SportEventListComponent implements OnInit {
       this.currentUser = this.loginService.currentUser;
       this.currentUserHasRoleAdmin();
       this.currentUserHasRoleUser();
+      this.currentUserHasRoleEmployee();
     }
   }
 
@@ -173,6 +177,14 @@ export class SportEventListComponent implements OnInit {
       this.isAdmin = true;
     } else {
       this.isAdmin = false;
+    }
+  }
+
+  private currentUserHasRoleEmployee(): void {
+    if (this.currentUser && this.currentUser.roles?.includes(Role.Employee)) {
+      this.isEmployee = true;
+    } else {
+      this.isEmployee = false;
     }
   }
 }

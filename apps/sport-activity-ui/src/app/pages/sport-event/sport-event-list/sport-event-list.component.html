@@ -43,7 +43,7 @@
               <td>{{ sportEvent.title | titlecase }}</td>
               <td>{{ sportEvent.sportclub.address.city | titlecase }}</td>
               <td>€{{ sportEvent.price }}</td>
-              <td>{{ sportEvent.startDateAndTime }}</td>
+              <td>{{ sportEvent.startDateAndTime | date : 'medium' }}</td>
               <td>
                 {{ sportEvent.enrolledParticipants?.length }}/{{
                   sportEvent.maximumNumberOfParticipants

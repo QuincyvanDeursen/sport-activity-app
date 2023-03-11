@@ -1,8 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Role, SportEvent, User } from '@sport-activity-app/domain';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { LoginService } from '../../login/login.service';
 import { debounceTime, takeUntil } from 'rxjs/operators';
+import { SportEventService } from '../sport-event.service';
+import { SweetAlert } from '../../../shared/HelperMethods/SweetAlert';
 
 @Component({
   selector: 'sport-activity-app-sport-event-create',
@@ -13,7 +15,10 @@ export class SportEventCreateComponent implements OnInit, OnDestroy {
   //current user data
   currentUser!: User;
   isEmployee = false;
-  constructor(private loginService: LoginService) {}
+  constructor(
+    private loginService: LoginService,
+    private sportEventService: SportEventService
+  ) {}
 
   //input change listeners
   titleChanged = new Subject<string>();
@@ -24,6 +29,8 @@ export class SportEventCreateComponent implements OnInit, OnDestroy {
   maximumNumberOfParticipantsChanged = new Subject<number>();
   private readonly destroy$ = new Subject<void>();
 
+  //subscription
+  createSportEventSubscription?: Subscription;
   //sportevent data
   newSportEvent: SportEvent = {
     title: '',
@@ -103,8 +110,18 @@ export class SportEventCreateComponent implements OnInit, OnDestroy {
 
   //
   createSportEvent() {
-    console.log('createSportEvent called in sport-event-create.component.ts');
+    // complete the newSportEvent object
     this.completeNewSportEvent();
+    // send the newSportEvent object to the backend
+    this.createSportEventSubscription = this.sportEventService
+      .createSportEvent(this.newSportEvent)
+      .subscribe({
+        next: () => {
+          SweetAlert.showSuccessAlert('Evenement aangemaakt!');
+        },
+        error: (e) => SweetAlert.showErrorAlert(e.error.message),
+        complete: () => console.log('delete sportevent complete (ui)'),
+      });
   }
 
   // completing the newSportEvent object

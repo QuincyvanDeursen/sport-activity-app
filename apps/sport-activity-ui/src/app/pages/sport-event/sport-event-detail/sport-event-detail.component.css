@@ -6,3 +6,59 @@
   margin-left: 10px;
   margin-right: 10px;
 }
+
+.customdeletebutton {
+  background-color: #000000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #ff0000;
+}
+
+.customdeletebutton:hover {
+  background-color: #ff0000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #000000;
+}
+
+.customupdatebutton {
+  background-color: #000000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #edde00;
+}
+
+.customupdatebutton:hover {
+  background-color: #edde00;
+  color: rgb(0, 0, 0);
+  border-radius: 10px;
+  border: 1px solid #000000;
+}
+
+.customenrollbutton {
+  background-color: #000000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #00bf0a;
+}
+
+.customenrollbutton:hover {
+  background-color: #00bf0a;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #000000;
+}
+
+.customunenrollbutton {
+  background-color: #000000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #ff0000;
+}
+
+.customunenrollbutton:hover {
+  background-color: #ff0000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #000000;
+}

@@ -26,6 +26,11 @@ export const appRoutes: Route[] = [
     component: SportEventCreateComponent,
   },
   {
+    path: 'sportevents/update',
+    pathMatch: 'full',
+    component: SportEventCreateComponent,
+  },
+  {
     path: 'sportevents',
     component: SportEventColumnsComponent,
     children: [

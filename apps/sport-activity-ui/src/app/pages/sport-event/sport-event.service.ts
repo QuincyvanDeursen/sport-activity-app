@@ -57,7 +57,7 @@ export class SportEventService {
     const body = JSON.stringify(sportEvent);
     const result = this.http
       .post<SportEvent>(
-        `${environment.SERVER_API_URL}sportevent`,
+        `${environment.SERVER_API_URL}sportevent/create`,
         body,
         httpOptions
       )
@@ -110,8 +110,8 @@ export class SportEventService {
 
   //enroll in sport event request
   enrollInSportEvent(enrollRequest: {
-    currentUserId: string | undefined;
-    sportEventId: string | undefined;
+    currentUserId: string;
+    sportEventId: string;
   }): Observable<any> {
     console.log('enroll in sport event ui-service called');
     console.log(httpOptions.headers);

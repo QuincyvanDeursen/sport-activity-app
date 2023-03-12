@@ -77,7 +77,7 @@ export class SportEventService {
     const body = JSON.stringify(sportEvent);
     const result = this.http
       .put<SportEvent>(
-        `${environment.SERVER_API_URL}sportevent/${sportEvent._id}`,
+        `${environment.SERVER_API_URL}sportevent`,
         body,
         httpOptions
       )

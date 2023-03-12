@@ -4,6 +4,7 @@ import { RegisterComponent } from './pages/register/register.component';
 import { SportEventColumnsComponent } from './pages/sport-event/sport-event-columns/sport-event-columns.component';
 import { SportEventCreateComponent } from './pages/sport-event/sport-event-create/sport-event-create.component';
 import { SportEventDetailComponent } from './pages/sport-event/sport-event-detail/sport-event-detail.component';
+import { SportEventUpdateComponent } from './pages/sport-event/sport-event-update/sport-event-update.component';
 import { AccountSettingsComponent } from './pages/user/account-settings/account-settings.component';
 import { UserListComponent } from './pages/user/user-list/user-list.component';
 
@@ -21,15 +22,16 @@ export const appRoutes: Route[] = [
   { path: 'register', pathMatch: 'full', component: RegisterComponent },
   { path: 'users', pathMatch: 'full', component: UserListComponent },
   {
+    path: 'sportevents/:id/update',
+    pathMatch: 'full',
+    component: SportEventUpdateComponent,
+  },
+  {
     path: 'sportevents/create',
     pathMatch: 'full',
     component: SportEventCreateComponent,
   },
-  {
-    path: 'sportevents/update',
-    pathMatch: 'full',
-    component: SportEventCreateComponent,
-  },
+
   {
     path: 'sportevents',
     component: SportEventColumnsComponent,

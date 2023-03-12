@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Role, SportEvent, User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
 import { SweetAlert } from '../../../shared/HelperMethods/SweetAlert';
@@ -27,7 +27,8 @@ export class SportEventDetailComponent implements OnInit, OnDestroy {
   constructor(
     private sportEventService: SportEventService,
     private route: ActivatedRoute,
-    private loginService: LoginService
+    private loginService: LoginService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -69,6 +70,10 @@ export class SportEventDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  //////////////////////////////////////////////////////
+  //////////       Enroll functionality      ///////////
+  //////////////////////////////////////////////////////
+
   //enroll in sportevent
   enrollInSportEvent() {
     if (!this.currentUser) {
@@ -76,7 +81,14 @@ export class SportEventDetailComponent implements OnInit, OnDestroy {
       return;
     }
 
-    //if user is already enrolled in sportevent, he can't enroll again
+    //if event is full he cant enroll
+    if (
+      this.sportEvent.maximumNumberOfParticipants ===
+      this.enrolledParticipants?.length
+    ) {
+      SweetAlert.showErrorAlert('Helaas, dit evenement zit vol');
+      return;
+    }
 
     console.log('enrolling in sportevent (ui)');
     const enrollRequest = {
@@ -93,7 +105,9 @@ export class SportEventDetailComponent implements OnInit, OnDestroy {
           );
         },
         error: (e) =>
-          SweetAlert.showErrorAlert(`Er is iets fout gegaan ${e.message}`),
+          SweetAlert.showErrorAlert(
+            `Er is iets fout gegaan, probeer het opnieuw`
+          ),
         complete: () => console.log('enrolling in sportevent complete (ui)'),
       });
   }
@@ -141,6 +155,32 @@ export class SportEventDetailComponent implements OnInit, OnDestroy {
         userToEnrollId,
       ];
     }
+  }
+
+  //////////////////////////////////////////////
+  //////    Delete & Update functionality  /////
+  //////////////////////////////////////////////
+
+  //delete sportevent
+  deleteSportEvent() {
+    console.log('deleting sportevent (ui)');
+    if (this.sportEvent.hostId !== this.currentUser?._id) {
+      SweetAlert.showErrorAlert(
+        'U bent niet de host van dit sportevent, u kunt het niet verwijderen'
+      );
+      return;
+    }
+
+    this.sportEventService
+      .deleteSportEvent(this.sportEventId as string)
+      .subscribe({
+        next: () => {
+          SweetAlert.showSuccessAlert('Sportevent succesvol verwijderd');
+          this.router.navigate(['/sportevents']);
+        },
+        error: () => SweetAlert.showErrorAlert('Er is iets fout gegaan'),
+        complete: () => console.log('deleting sportevent complete (ui)'),
+      });
   }
 
   ///////////////////////////////////////////////////////////

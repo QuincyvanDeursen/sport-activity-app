@@ -155,6 +155,16 @@ export class UserService {
       if (!userUpdateResult) {
         throw new HttpException('User not found', 404);
       }
+      //update sportclub in events
+      if (newUser.sportclub) {
+        await this.sportEventModel
+          .updateMany(
+            { hostId: newUser._id },
+            { $set: { sportclub: newUser.sportclub } }
+          )
+          .lean();
+      }
+
       return {
         statusCode: 200,
         message: `User with id: ${newUser._id} updated`,

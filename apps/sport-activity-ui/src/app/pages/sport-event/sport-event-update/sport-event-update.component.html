@@ -1,0 +1,168 @@
+<div *ngIf="sportEventToUpdate">
+  <div class="container">
+    <div class="row backgrounddark">
+      <div class="col-12 text-center pt-2">
+        <h2>Update sportevenement</h2>
+      </div>
+      <!-- form -->
+      <div class="col-12 text-center">
+        <form
+          #createEventForm="ngForm"
+          (ngSubmit)="updateSportEvent()"
+          name="form"
+          novalidate
+        >
+          <div class="form-group">
+            <label for="title">Titel:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              placeholder="Workshop powerliften"
+              name="title"
+              [(ngModel)]="sportEventToUpdate.title"
+              #title="ngModel"
+              required
+            />
+            <div
+              *ngIf="title.invalid && title.touched"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="title.errors!['required']">Titel is verplicht.</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="description">Beschrijving:</label>
+            <textarea
+              class="form-control"
+              id="description"
+              name="description"
+              placeholder="In deze workshop gaan we focussen op ..."
+              [(ngModel)]="sportEventToUpdate.description"
+              #description="ngModel"
+              required
+            ></textarea>
+            <div
+              *ngIf="description.invalid && description.touched"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="description.errors!['required']">
+                Beschrijving is verplicht.
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="price">Prijs (€):</label>
+
+            <input
+              type="number"
+              class="form-control"
+              id="price"
+              name="price"
+              placeholder="€ 10.00"
+              step="0.01"
+              min="0"
+              max="1000"
+              [(ngModel)]="sportEventToUpdate.price"
+              #price="ngModel"
+              required
+            />
+            <small>Gebruik een punt als decimaal scheider</small>
+            <div
+              *ngIf="price.invalid && price.touched"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="price.errors!['required']">Prijs is verplicht.</div>
+              <div *ngIf="price.errors!['min']">
+                Prijs kan geen negatief getal zijn.
+              </div>
+              <div *ngIf="price.errors!['max']">
+                Prijs kan maximaal 1000euro zijn.
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="startDataAndTime">Startdatum en tijd</label>
+            <input
+              type="datetime-local"
+              class="form-control"
+              id="startDataAndTime"
+              name="startDataAndTime"
+              [(ngModel)]="sportEventDateString"
+              #startDataAndTime="ngModel"
+              required
+            />
+            <div
+              *ngIf="startDataAndTime.invalid && startDataAndTime.touched"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="startDataAndTime.errors!['required']">
+                Startdatum en tijd is verplicht.
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="durationInMinutes">Duur in minuten</label>
+            <input
+              type="number"
+              class="form-control"
+              id="durationInMinutes"
+              name="durationInMinutes"
+              [(ngModel)]="sportEventToUpdate.durationInMinutes"
+              #durationInMinutes="ngModel"
+              required
+            />
+            <div
+              *ngIf="durationInMinutes.invalid && durationInMinutes.touched"
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="durationInMinutes.errors!['required']">
+                De duur in minuten is verplicht.
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="maximumNumberOfParticipants"
+              >Maximum aantal deelnemers:</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              id="maximumNumberOfParticipants"
+              name="maximumNumberOfParticipants"
+              placeholder="10"
+              [(ngModel)]="sportEventToUpdate.maximumNumberOfParticipants"
+              #maximumNumberOfParticipants="ngModel"
+              required
+            />
+            <div
+              *ngIf="
+                maximumNumberOfParticipants.invalid &&
+                maximumNumberOfParticipants.touched
+              "
+              class="alert alert-danger mt-1"
+            >
+              <div *ngIf="maximumNumberOfParticipants.errors!['required']">
+                Maximum aantal deelnemers is verplicht.
+              </div>
+            </div>
+          </div>
+          <div class="row py-3">
+            <div class="col d-flex justify-content-center">
+              <button class="btn customcancelbutton mx-2" routerLink="..">
+                Annuleren
+              </button>
+              <button
+                type="submit"
+                class="btn customcreatebutton mx-2"
+                [disabled]="!createEventForm.valid"
+              >
+                Aanmaken
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

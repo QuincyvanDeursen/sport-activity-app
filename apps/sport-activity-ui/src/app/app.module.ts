@@ -19,6 +19,7 @@ import { SportEventListComponent } from './pages/sport-event/sport-event-list/sp
 import { SportEventDetailComponent } from './pages/sport-event/sport-event-detail/sport-event-detail.component';
 import { SportEventColumnsComponent } from './pages/sport-event/sport-event-columns/sport-event-columns.component';
 import { SportEventCreateComponent } from './pages/sport-event/sport-event-create/sport-event-create.component';
+import { SportEventUpdateComponent } from './pages/sport-event/sport-event-update/sport-event-update.component';
 
 @NgModule({
   declarations: [
@@ -35,6 +36,7 @@ import { SportEventCreateComponent } from './pages/sport-event/sport-event-creat
     SportEventDetailComponent,
     SportEventColumnsComponent,
     SportEventCreateComponent,
+    SportEventUpdateComponent,
   ],
   imports: [
     BrowserModule,

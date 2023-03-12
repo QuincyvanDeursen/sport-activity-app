@@ -75,14 +75,12 @@
           <div class="col-3 text-center">
             <a
               class="btn customupdatebutton"
-              [routerLink]="'/sportevents/create'"
+              [routerLink]="'/sportevents/' + sportEvent._id + '/update'"
               >Aanpassen</a
             >
           </div>
           <div class="col-3 text-center">
-            <a
-              class="btn customdeletebutton"
-              [routerLink]="'/sportevents/create'"
+            <a class="btn customdeletebutton" (click)="deleteSportEvent()"
               >Verwijderen</a
             >
           </div>

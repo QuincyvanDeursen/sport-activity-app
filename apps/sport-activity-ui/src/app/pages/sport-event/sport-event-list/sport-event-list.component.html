@@ -44,11 +44,12 @@
               <td>{{ sportEvent.sportclub.address.city | titlecase }}</td>
               <td>€{{ sportEvent.price }}</td>
               <td>{{ sportEvent.startDateAndTime | date : 'medium' }}</td>
-              <td>
-                {{ sportEvent.enrolledParticipants?.length }}/{{
+              <td *ngIf="!sportEvent.isFull">
+                {{ sportEvent.enrolledParticipantsCount }}/{{
                   sportEvent.maximumNumberOfParticipants
                 }}
               </td>
+              <td *ngIf="sportEvent.isFull">Vol</td>
               <td>
                 <a
                   routerLink="{{ sportEvent._id }}"

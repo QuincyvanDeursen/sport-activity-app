@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { UserDocument } from '../Schemas/user.schema';
 import { SportEventDocument } from '../Schemas/sportEvent.schema';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -148,6 +149,21 @@ export class UserService {
   //update account settings (user)
   async updateAccountSettings(newUser: User): Promise<object> {
     try {
+      console.log('updateAccountSettings from user.service.ts (api) called');
+      const user = new this.userModel();
+      Object.assign(user, newUser);
+
+      const validationError = user.validateSync();
+      if (validationError) {
+        throw new HttpException(validationError.message, 400);
+      }
+
+      //hash password
+      if (newUser.password) {
+        const salt = await bcrypt.genSalt(10);
+        newUser.password = await bcrypt.hash(newUser.password, salt);
+      }
+
       const userUpdateResult = await this.userModel
         .findByIdAndUpdate(newUser._id, { $set: newUser }, { new: true })
         .lean();

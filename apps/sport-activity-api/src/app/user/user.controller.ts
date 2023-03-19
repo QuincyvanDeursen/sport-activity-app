@@ -87,16 +87,10 @@ export class UserController {
     return result;
   }
 
-  //profile
-  @Get('profile')
-  getProfile(@Request() req) {
-    return 'werkt';
-  }
-
   //update account settings endpoint
-  @HasRoles(Role.User, Role.Employee)
+  @HasRoles(Role.User, Role.Employee, Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Put('accountsettings')
+  @Put()
   async updateAccountSettings(@Body() user: User): Promise<object> {
     console.log('update account settings called from user.controller.ts (api)');
     const result = await this.userService.updateAccountSettings(user);

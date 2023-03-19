@@ -66,6 +66,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@ng-bootstrap/ng-bootstrap": "^13.1.0",
     "@popperjs/core": "^2.10.2",
+    "bcrypt": "^5.1.0",
     "bootstrap": "^5.2.0",
     "config": "^3.3.8",
     "mongodb-memory-server": "^8.10.1",

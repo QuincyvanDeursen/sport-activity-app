@@ -103,11 +103,7 @@ export class UserService {
     console.log(httpOptions.headers);
     const body = JSON.stringify(user);
     const result = this.http
-      .put<object>(
-        `${environment.SERVER_API_URL}user/accountsettings`,
-        body,
-        httpOptions
-      )
+      .put<object>(`${environment.SERVER_API_URL}user`, body, httpOptions)
       .pipe(
         map((response: any) => {
           return response.results;

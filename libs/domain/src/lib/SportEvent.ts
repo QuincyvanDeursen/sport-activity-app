@@ -11,4 +11,9 @@ export interface SportEvent {
   enrolledParticipants?: string[];
   hostId: string;
   sportclub: Sportclub;
+  //virtuals
+  enrolledParticipantsCount?: number;
+  isFull?: boolean;
+  maximumIncome?: number;
+  currentIncome?: number;
 }

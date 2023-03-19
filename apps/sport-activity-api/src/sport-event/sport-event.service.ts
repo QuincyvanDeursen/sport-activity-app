@@ -18,10 +18,8 @@ export class SportEventService {
   async getAllSportEvents(): Promise<SportEvent[]> {
     console.log('get all sportevents service (api) called');
     try {
-      const result: SportEvent[] = await this.sportEventModel
-        .find()
-        .select({ host: { password: 0 } })
-        .lean();
+      const result: SportEvent[] = await this.sportEventModel.find();
+      console.log(result);
       return result;
     } catch (error) {
       throw new HttpException(error.message, 400);
@@ -47,10 +45,7 @@ export class SportEventService {
   async findSportEventById(id: string): Promise<any> {
     console.log('find sportevent by id service (api) called');
     try {
-      const sportEvent = await this.sportEventModel
-        .findById(id)
-        .select({ host: { password: 0 } })
-        .lean();
+      const sportEvent = await this.sportEventModel.findById(id);
       if (!sportEvent) {
         throw new HttpException('SportEvent not found', 404);
       }

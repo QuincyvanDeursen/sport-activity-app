@@ -112,4 +112,22 @@ export class UserService {
 
     return result;
   }
+
+  //get employee statistics request
+  getEmployeeStatistics(id: string): Observable<any> {
+    console.log('get employee statistics ui-service called');
+    console.log(httpOptions.headers);
+    const result = this.http
+      .get<object>(
+        `${environment.SERVER_API_URL}user/statistics/${id}`,
+        httpOptions
+      )
+      .pipe(
+        map((response: any) => {
+          return response.results;
+        })
+      );
+
+    return result;
+  }
 }

@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { User } from '@sport-activity-app/domain';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { UserDocument } from '../Schemas/user.schema';
 import { SportEventDocument } from '../Schemas/sportEvent.schema';
 import * as bcrypt from 'bcrypt';
@@ -195,5 +195,70 @@ export class UserService {
         throw new HttpException(error.message, 400);
       }
     }
+  }
+
+  // get employee statistics
+  async getEmployeeStatistics(hostId: string): Promise<any> {
+    const now = new Date();
+
+    const pipeline = [
+      // Match only sport events hosted by the specified host
+      {
+        $match: {
+          hostId: new mongoose.Types.ObjectId(hostId),
+        },
+      },
+      // Add a computed field to calculate the income for each sport event
+      {
+        $addFields: {
+          income: { $multiply: ['$price', { $size: '$enrolledParticipants' }] },
+          potentialIncome: {
+            $multiply: ['$price', '$maximumNumberOfParticipants'],
+          },
+          completedEvents: { $lte: ['$startDateAndTime', now] },
+        },
+      },
+      // Group the sport events by the host and calculate aggregate values
+      {
+        $group: {
+          _id: '$hostId',
+          totalEvents: { $sum: 1 },
+          totalParticipants: { $sum: { $size: '$enrolledParticipants' } },
+          totalIncome: {
+            $sum: {
+              $cond: [{ $lte: ['$startDateAndTime', now] }, '$income', 0],
+            },
+          },
+          avgPrice: { $avg: '$price' },
+          maxPrice: { $max: '$price' },
+          minPrice: { $min: '$price' },
+          avgDuration: { $avg: '$durationInMinutes' },
+          maxDuration: { $max: '$durationInMinutes' },
+          minDuration: { $min: '$durationInMinutes' },
+          avgParticipants: { $avg: { $size: '$enrolledParticipants' } },
+          maxParticipants: { $max: { $size: '$enrolledParticipants' } },
+          minParticipants: { $min: { $size: '$enrolledParticipants' } },
+          avgIncome: { $avg: '$income' },
+          maxIncome: { $max: '$income' },
+          minIncome: { $min: '$income' },
+          potentialIncome: {
+            $sum: {
+              $cond: [
+                { $gte: ['$startDateAndTime', now] },
+                '$potentialIncome',
+                0,
+              ],
+            },
+          },
+          totalCompletedEvents: {
+            $sum: { $cond: [{ $lte: ['$startDateAndTime', now] }, 1, 0] },
+          },
+        },
+      },
+    ];
+
+    const employeeStatistics = await this.sportEventModel.aggregate(pipeline);
+
+    return employeeStatistics;
   }
 }

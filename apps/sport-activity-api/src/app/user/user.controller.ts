@@ -11,13 +11,17 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 
 import { Role, User } from '@sport-activity-app/domain';
+import { Neo4jQueryService } from '../../neo4-j/neo4-j.service';
 import { HasRoles } from '../auth/AuthTsFiles/roles.decorator';
 import { RolesGuard } from '../auth/AuthTsFiles/roles.guard';
 import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly neo4jQueryService: Neo4jQueryService
+  ) {}
 
   //register endpoint
   @Post('register')
@@ -32,6 +36,19 @@ export class UserController {
   async getAllUsers(): Promise<User[]> {
     console.log('get all users controller');
     const result = await this.userService.getAllUsers();
+    return result;
+  }
+
+  //test neo4j
+  @Get('/test')
+  async testNeo4j(): Promise<object> {
+    console.log('test neo4j called from user.controller.ts (api)');
+
+    //create
+    await this.neo4jQueryService.write(
+      'CREATE (n:Person {name: "quincy"}) RETURN n'
+    );
+    const result = await this.neo4jQueryService.read('MATCH (n) RETURN n');
     return result;
   }
 
@@ -94,6 +111,16 @@ export class UserController {
   async updateAccountSettings(@Body() user: User): Promise<object> {
     console.log('update account settings called from user.controller.ts (api)');
     const result = await this.userService.updateAccountSettings(user);
+    return result;
+  }
+
+  //update account settings endpoint
+  @HasRoles(Role.Employee, Role.Admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Get('statistics/:id')
+  async getEmployeeStatistics(@Request() req): Promise<object> {
+    console.log('get employee statistics called from user.controller.ts (api)');
+    const result = await this.userService.getEmployeeStatistics(req.params.id);
     return result;
   }
 }

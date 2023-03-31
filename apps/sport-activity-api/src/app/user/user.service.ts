@@ -5,17 +5,48 @@ import mongoose, { Model } from 'mongoose';
 import { UserDocument } from '../Schemas/user.schema';
 import { SportEventDocument } from '../Schemas/sportEvent.schema';
 import * as bcrypt from 'bcrypt';
+import { Neo4jQueryService } from '../../neo4-j/neo4-j.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel('User') private readonly userModel: Model<UserDocument>,
     @InjectModel('SportEvent')
-    private readonly sportEventModel: Model<SportEventDocument>
+    private readonly sportEventModel: Model<SportEventDocument>,
+    private readonly neo4jQueryService: Neo4jQueryService
   ) {}
+
+  ////////////////////////////////////////
+  //////////// Create User ///////////////
+  ////////////////////////////////////////
 
   //creating a user.
   async create(user: User): Promise<object> {
+    let userInMongoDB: { mongoId: string; firstName: string };
+    try {
+      userInMongoDB = await this.createUserInMongoDB(user);
+      const userIncreaeNeo4j = await this.createUserInNeo4j(
+        userInMongoDB.firstName,
+        userInMongoDB.mongoId
+      );
+      if (userIncreaeNeo4j && userInMongoDB) {
+        return {
+          statusCode: 201,
+          message: `User succesfully created`,
+        };
+      }
+    } catch (error) {
+      if (userInMongoDB) {
+        await this.userModel.findByIdAndDelete(userInMongoDB.mongoId).lean();
+      }
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  //create user in mongoDB
+  private async createUserInMongoDB(
+    user: User
+  ): Promise<{ mongoId: string; firstName: string }> {
     try {
       const createdUser = new this.userModel(user);
       createdUser.email = user.email.toLowerCase();
@@ -25,10 +56,11 @@ export class UserService {
       console.log(user);
 
       await createdUser.save();
-      return {
-        statusCode: 201,
-        message: `User ${createdUser.firstName} created`,
+      const userInMongoDB = {
+        mongoId: createdUser._id.toString(),
+        firstName: createdUser.firstName,
       };
+      return userInMongoDB;
     } catch (error) {
       if (error.code === 11000) {
         throw new HttpException(
@@ -40,6 +72,25 @@ export class UserService {
       }
     }
   }
+
+  //create user in neo4j
+  private async createUserInNeo4j(
+    userName: string,
+    userId: string
+  ): Promise<boolean> {
+    try {
+      await this.neo4jQueryService.write(
+        `CREATE (n:User {mongoId: "${userId}", name: "${userName}"}) RETURN n`
+      );
+      return true;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  ////////////////////////////////////////
+  //////////// Getting users /////////////
+  ////////////////////////////////////////
 
   //finding a user by email.
   async findUserByEmail(email: string): Promise<any> {
@@ -74,28 +125,99 @@ export class UserService {
     return result;
   }
 
+  ////////////////////////////////////////
+  //////////// Follow users //////////////
+  ////////////////////////////////////////
+
   //follow user
   async followUser(
     currentUserId: string,
     userToFollowId: string
   ): Promise<object> {
     console.log('follow user service (api) called');
-    const user: User = await this.userModel
+    let userInMongoDB;
+    try {
+      userInMongoDB = await this.followUserInMongoDB(
+        currentUserId,
+        userToFollowId
+      );
+      const userInNeo4j = await this.followUserInNeo4j(
+        currentUserId,
+        userToFollowId
+      );
+      if (userInMongoDB && userInNeo4j) {
+        return {
+          statusCode: 201,
+          message: `User ${userInMongoDB.firstName} now follows user with id: ${userToFollowId}`,
+        };
+      }
+    } catch (error) {
+      //rolback
+      if (userInMongoDB) {
+        await this.userModel
+          .findByIdAndUpdate(
+            currentUserId,
+            { $pull: { followingUsers: userToFollowId } },
+            { new: true }
+          )
+          .lean();
+      }
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  private async followUserInMongoDB(currentUserId, userToFollowId) {
+    console.log('follow user service (api) called (mongoDB)');
+    if (currentUserId === userToFollowId) {
+      throw new HttpException('You cannot follow yourself', 400);
+    }
+    const userToFollow = await this.userModel.findById(userToFollowId).lean();
+    if (!userToFollow) {
+      throw new HttpException('User to follow not found', 404);
+    }
+
+    const currentUser = await this.userModel.findById(currentUserId).lean();
+    if (!currentUser) {
+      throw new HttpException('currentUser not found', 404);
+    }
+    await this.userModel
       .findByIdAndUpdate(
         currentUserId,
         { $addToSet: { followingUsers: userToFollowId } },
         { new: true }
       )
       .lean();
-    if (!user) {
-      throw new HttpException('User not found', 404);
-    }
+
     //neo4j needs to be implemented here
     return {
       statusCode: 201,
-      message: `User ${user.firstName} now follows user with id: ${userToFollowId}`,
+      message: `User with id ${currentUserId} now follows user with id: ${userToFollowId}`,
     };
   }
+
+  //follow user in neo4j
+  private async followUserInNeo4j(
+    currentUserId: string,
+    userToFollowId: string
+  ): Promise<boolean> {
+    console.log('follow user service (api) called (neo4j)');
+    try {
+      await this.neo4jQueryService.write(
+        `MATCH (a:User {mongoId: "${currentUserId}"}) 
+        MATCH (b:User {mongoId: "${userToFollowId}"}) 
+        WHERE a <> b 
+        CREATE (a)-[r:FOLLOWS]->(b) 
+        `
+      );
+      return true;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  ////////////////////////////////////////
+  //////////// Unfollow users ////////////
+  ////////////////////////////////////////
 
   //unfollow user
   async unfollowUser(
@@ -103,26 +225,112 @@ export class UserService {
     userToUnfollowId: string
   ): Promise<object> {
     console.log('unfollow user service (api) called');
-    const user: User = await this.userModel
-      .findByIdAndUpdate(
+    let mongoResult;
+    try {
+      mongoResult = await this.unfollowUserInMongoDB(
         currentUserId,
-        { $pull: { followingUsers: userToUnfollowId } },
-        { new: true }
-      )
-      .lean();
-    if (!user) {
-      throw new HttpException('User not found', 404);
+        userToUnfollowId
+      );
+      const neo4jResult = await this.unfollowUserInNeo4j(
+        currentUserId,
+        userToUnfollowId
+      );
+      console.log(currentUserId);
+      if (mongoResult && neo4jResult) {
+        return {
+          statusCode: 201,
+          message: `User with id ${currentUserId} now no longer follows user with id: ${userToUnfollowId}`,
+        };
+      }
+    } catch (error) {
+      return {
+        statusCode: 400,
+        message: error.message,
+      };
     }
-    //neo4j needs to be implemented here
-    return {
-      statusCode: 201,
-      message: `User ${user.firstName} now no longer follows user with id: ${userToUnfollowId}`,
-    };
   }
+
+  private async unfollowUserInMongoDB(
+    currentUserId: string,
+    userToUnfollowId: string
+  ): Promise<boolean> {
+    console.log('unfollow user service (api) called (mongoDB)');
+    try {
+      if (currentUserId === userToUnfollowId) {
+        throw new HttpException('You cannot unfollow yourself', 400);
+      }
+      const userToFollow = await this.userModel
+        .findById(userToUnfollowId)
+        .lean();
+      if (!userToFollow) {
+        throw new HttpException('User to unfollow not found', 404);
+      }
+
+      const currentUser = await this.userModel.findById(currentUserId).lean();
+      if (!currentUser) {
+        throw new HttpException('currentUser not found', 404);
+      }
+      await this.userModel
+        .findByIdAndUpdate(
+          currentUserId,
+          { $pull: { followingUsers: userToUnfollowId } },
+          { new: true }
+        )
+        .lean();
+      return true;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  //unfollow user in neo4j
+  private async unfollowUserInNeo4j(
+    currentUserId: string,
+    userToUnfollowId: string
+  ): Promise<boolean> {
+    console.log('unfollow user service (api) called (neo4j)');
+    try {
+      await this.neo4jQueryService.write(
+        `MATCH (a:User {mongoId: "${currentUserId}"})
+        MATCH (b:User {mongoId: "${userToUnfollowId}"})
+        WHERE a <> b
+        MATCH (a)-[r:FOLLOWS]->(b)
+        DELETE r
+        `
+      );
+      return true;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  ////////////////////////////////////////
+  //////////// Delete   //////////////////
+  ////////////////////////////////////////
 
   //delete user
   async deleteUser(_id: string): Promise<object> {
     console.log('deleteUser from user.service.ts (api) called');
+    let mongoResult;
+    try {
+      mongoResult = await this.deleteUserInMongoDB(_id);
+      const neo4jResult = await this.deleteUserInNeo4j(_id);
+      if (mongoResult && neo4jResult) {
+        return {
+          statusCode: 200,
+          message: `User ${mongoResult.firstName} deleted`,
+        };
+      }
+    } catch (error) {
+      return {
+        statusCode: 400,
+        message: error.message,
+      };
+    }
+  }
+
+  private async deleteUserInMongoDB(_id: string): Promise<boolean> {
+    console.log('deleteUser from user.service.ts (api) called (mongoDB)');
     try {
       const user = await this.userModel.findByIdAndDelete(_id).lean();
       if (!user) {
@@ -137,14 +345,29 @@ export class UserService {
         .updateMany({}, { $pull: { enrolledParticipants: _id } })
         .lean();
 
-      return {
-        statusCode: 200,
-        message: `User ${user.firstName} deleted`,
-      };
+      return true;
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
   }
+
+  private async deleteUserInNeo4j(_id: string): Promise<boolean> {
+    console.log('deleteUser from user.service.ts (api) called (neo4j)');
+    try {
+      await this.neo4jQueryService.write(
+        `MATCH (a:User {mongoId: "${_id}"})
+        DETACH DELETE a
+        `
+      );
+      return true;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  ////////////////////////////////////////
+  ////////////     Update   //////////////
+  ////////////////////////////////////////
 
   //update account settings (user)
   async updateAccountSettings(newUser: User): Promise<object> {
@@ -196,6 +419,10 @@ export class UserService {
       }
     }
   }
+
+  //////////////////////////////////////////
+  ////////////     Statistics   ///////////
+  ////////////////////////////////////////
 
   // get employee statistics
   async getEmployeeStatistics(hostId: string): Promise<any> {

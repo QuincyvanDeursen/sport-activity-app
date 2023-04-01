@@ -153,4 +153,58 @@ export class SportEventService {
 
     return result;
   }
+
+  //get recommended sport events request
+  getRecommendedSportEvents(userId: string): Observable<SportEvent[]> {
+    console.log('get recommended sport events ui-service called');
+    console.log(httpOptions.headers);
+    const result = this.http
+      .get<SportEvent[]>(
+        `${environment.SERVER_API_URL}sportevent/recommended/${userId}`,
+        httpOptions
+      )
+      .pipe(
+        map((response: any) => {
+          return response.results;
+        })
+      );
+
+    return result;
+  }
+
+  //get sport events currently enrolled in request
+  getSportEventsCurrentlyEnrolledIn(userId: string): Observable<SportEvent[]> {
+    console.log('get sport events currently enrolled in ui-service called');
+    console.log(httpOptions.headers);
+    const result = this.http
+      .get<SportEvent[]>(
+        `${environment.SERVER_API_URL}sportevent/enrolled/${userId}`,
+        httpOptions
+      )
+      .pipe(
+        map((response: any) => {
+          return response.results;
+        })
+      );
+
+    return result;
+  }
+
+  //get sport events created by user request
+  getHostedSportEvents(userId: string): Observable<SportEvent[]> {
+    console.log('get sport events created by user ui-service called');
+    console.log(httpOptions.headers);
+    const result = this.http
+      .get<SportEvent[]>(
+        `${environment.SERVER_API_URL}sportevent/hosted/${userId}`,
+        httpOptions
+      )
+      .pipe(
+        map((response: any) => {
+          return response.results;
+        })
+      );
+
+    return result;
+  }
 }

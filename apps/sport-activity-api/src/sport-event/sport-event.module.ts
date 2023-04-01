@@ -4,7 +4,7 @@ import { SportEventService } from './sport-event.service';
 import { SportEventController } from './sport-event.controller';
 import { SportEventSchema } from '../app/Schemas/sportEvent.schema';
 import { UserSchema } from '../app/Schemas/user.schema';
-import { AuthModule } from '../app/auth/auth.module';
+import { Neo4jQueryService } from '../neo4-j/neo4-j.service';
 
 @Module({
   imports: [
@@ -13,7 +13,7 @@ import { AuthModule } from '../app/auth/auth.module';
       { name: 'User', schema: UserSchema },
     ]),
   ],
-  providers: [SportEventService, AuthModule],
+  providers: [SportEventService, Neo4jQueryService],
   exports: [SportEventService],
   controllers: [SportEventController],
 })

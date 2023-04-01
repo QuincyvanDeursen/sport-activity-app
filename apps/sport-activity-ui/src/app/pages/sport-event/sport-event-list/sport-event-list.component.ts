@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Role, SportEvent, User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
@@ -12,17 +12,23 @@ import { SportEventService } from '../sport-event.service';
   templateUrl: './sport-event-list.component.html',
   styleUrls: ['./sport-event-list.component.css'],
 })
-export class SportEventListComponent implements OnInit {
+export class SportEventListComponent implements OnInit, OnDestroy {
   sportEvents: SportEvent[] = [];
 
   //filter
   private _sportEventTitle = '';
   private _sportEventCity = '';
   filteredSportEvents: SportEvent[] = this.sportEvents;
+  recommendationIsShowing = false;
+  enrolledSportEventsIsShowing = false;
+  hostedSportEventsIsShowing = false;
 
   //subscriptions
   getAllSportEventsSubscription?: Subscription;
   deleteSportEventSubscription?: Subscription;
+  getRecommendedSportEventsSubscription?: Subscription;
+  getEnrolledSportEventsSubscription?: Subscription;
+  getHostedSportEventsSubscription?: Subscription;
 
   //current user data
   currentUser!: User;
@@ -32,8 +38,7 @@ export class SportEventListComponent implements OnInit {
 
   constructor(
     private loginService: LoginService,
-    private sportEventService: SportEventService,
-    private router: Router
+    private sportEventService: SportEventService
   ) {}
 
   ngOnInit(): void {
@@ -41,22 +46,90 @@ export class SportEventListComponent implements OnInit {
     this.getSportEvents();
   }
 
+  ngOnDestroy(): void {
+    this.getAllSportEventsSubscription?.unsubscribe();
+    this.deleteSportEventSubscription?.unsubscribe();
+    this.getRecommendedSportEventsSubscription?.unsubscribe();
+    this.getEnrolledSportEventsSubscription?.unsubscribe();
+    this.getHostedSportEventsSubscription?.unsubscribe();
+  }
+
   ///////////////////////////////////////////////////////////
   //////////       Get sportevents functionality      ///////
   ///////////////////////////////////////////////////////////
 
-  //get all users
+  //get all sportevents
   getSportEvents() {
     this.getAllSportEventsSubscription = this.sportEventService
       .getAllSportEvents()
       .subscribe({
         next: (v) => {
-          console.log(v);
+          this.sportEvents = v;
+          this.filteredSportEvents = v;
+          this.recommendationIsShowing = false;
+          this.enrolledSportEventsIsShowing = false;
+          this.hostedSportEventsIsShowing = false;
+        },
+        error: () => SweetAlert.showErrorAlert('Er is iets fout gegaan'),
+        complete: () => console.log('getting al sportevents complete (ui)'),
+      });
+  }
+
+  getRecommendedSportEvents() {
+    if (!this.currentUser._id) {
+      SweetAlert.showErrorAlert('Er is iets fout gegaan');
+      return;
+    }
+
+    this.getRecommendedSportEventsSubscription = this.sportEventService
+      .getRecommendedSportEvents(this.currentUser._id)
+      .subscribe({
+        next: (v) => {
+          this.sportEvents = v;
+          this.filteredSportEvents = v;
+          this.recommendationIsShowing = true;
+          this.enrolledSportEventsIsShowing = false;
+        },
+        error: () => SweetAlert.showErrorAlert('Er is iets fout gegaan'),
+        complete: () => console.log('getting recommended sportevents complete'),
+      });
+  }
+
+  getEnrolledSportEvents() {
+    if (!this.currentUser._id) {
+      SweetAlert.showErrorAlert('Er is iets fout gegaan');
+      return;
+    }
+
+    this.getEnrolledSportEventsSubscription = this.sportEventService
+      .getSportEventsCurrentlyEnrolledIn(this.currentUser._id)
+      .subscribe({
+        next: (v) => {
+          this.sportEvents = v;
+          this.filteredSportEvents = v;
+          this.recommendationIsShowing = false;
+          this.enrolledSportEventsIsShowing = true;
+        },
+        error: () => SweetAlert.showErrorAlert('Er is iets fout gegaan'),
+        complete: () => console.log('getting enrolled sportevents complete'),
+      });
+  }
+
+  getHostedSportEvents() {
+    if (!this.currentUser._id) {
+      SweetAlert.showErrorAlert('Er is iets fout gegaan');
+      return;
+    }
+    this.hostedSportEventsIsShowing = true;
+    this.getHostedSportEventsSubscription = this.sportEventService
+      .getHostedSportEvents(this.currentUser._id)
+      .subscribe({
+        next: (v) => {
           this.sportEvents = v;
           this.filteredSportEvents = v;
         },
         error: () => SweetAlert.showErrorAlert('Er is iets fout gegaan'),
-        complete: () => console.log('getting al sportevents complete (ui)'),
+        complete: () => console.log('getting hosted sportevents complete'),
       });
   }
 

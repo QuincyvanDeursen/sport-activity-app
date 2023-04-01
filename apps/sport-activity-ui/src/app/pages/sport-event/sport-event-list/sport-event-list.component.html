@@ -1,7 +1,55 @@
 <div class="container">
-  <div class="row backgrounddark">
-    <div class="col-12">
+  <div class="row backgrounddark justify-content-center py-4">
+    <div class="col-12 col-lg-7">
       <h1 class="text-center">Sport Evenementen</h1>
+    </div>
+    <div
+      *ngIf="isEmployee"
+      class="col-12 col-lg-2 d-flex my-auto justify-content-center"
+    >
+      <a
+        *ngIf="hostedSportEventsIsShowing"
+        class="btn customcreatebutton"
+        (click)="getSportEvents()"
+        >Toon Alles</a
+      >
+      <a
+        *ngIf="!hostedSportEventsIsShowing"
+        class="btn customcreatebutton"
+        (click)="getHostedSportEvents()"
+        >Mijn Evenementen</a
+      >
+    </div>
+
+    <div class="col-12 col-lg-2 py-2 d-flex my-auto justify-content-center">
+      <a
+        *ngIf="recommendationIsShowing && isUser"
+        class="btn customcreatebutton"
+        (click)="getSportEvents()"
+        >Toon Alles</a
+      >
+
+      <a
+        *ngIf="!recommendationIsShowing && isUser"
+        class="btn customcreatebutton"
+        (click)="getRecommendedSportEvents()"
+        >Toon Aanbevelingen</a
+      >
+    </div>
+    <div class="col-12 col-lg-2 d-flex my-auto justify-content-center">
+      <a
+        *ngIf="enrolledSportEventsIsShowing && isUser"
+        class="btn customcreatebutton"
+        (click)="getSportEvents()"
+        >Toon Alles</a
+      >
+
+      <a
+        *ngIf="!enrolledSportEventsIsShowing && isUser"
+        class="btn customcreatebutton"
+        (click)="getEnrolledSportEvents()"
+        >Toon Inschrijvingen</a
+      >
     </div>
     <!-- Search bar -->
     <div class="col-12">
@@ -61,7 +109,7 @@
             </tr>
           </tbody>
           <tbody *ngIf="sportEvents.length === 0">
-            <td colspan="5">
+            <td colspan="7">
               <h2 class="text-center">Er zijn geen Evenementen gevonden!</h2>
             </td>
           </tbody>

@@ -1,87 +1,105 @@
-<div class="container">
-  <div class="row backgrounddark">
-    <div class="col-12">
-      <h1 class="text-center">Leden</h1>
-    </div>
-    <div class="col -12">
-      <div class="input-group mt-3">
-        <input
-          type="text"
-          class="form-control"
-          placeholder="zoek op voornaam.."
-          aria-label="Zoek gebruiker"
-          [(ngModel)]="firstNameSearchTerm"
-        />
-        <input
-          type="text"
-          class="form-control"
-          placeholder="zoek op achternaam.."
-          aria-label="Zoek gebruiker"
-          [(ngModel)]="lastNameSearchTerm"
-        />
+<div *ngIf="!currentUser; then loginTemplate; else tableTemplate"></div>
+<ng-template #tableTemplate>
+  <div class="container">
+    <div class="row backgrounddark">
+      <div class="col-12">
+        <h1 class="text-center">Leden</h1>
       </div>
-    </div>
-    <div class="col-12">
-      <div class="table-responsive mb-5">
-        <table class="table tableborder table-dark">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Voornaam</th>
-              <th scope="col">Achternaam</th>
-              <th scope="col">Stad</th>
-              <th *ngIf="isUser || isAdmin" scope="col"></th>
-            </tr>
-          </thead>
-          <tbody *ngIf="users.length > 0">
-            <tr *ngFor="let user of filteredUsers; let i = index">
-              <th scope="row">{{ i + 1 }}</th>
-              <td>{{ user.firstName | titlecase }}</td>
-              <td>{{ user.lastName | titlecase }}</td>
-              <td>{{ user.city | titlecase }}</td>
-              <div
-                *ngIf="
-                  currentlyFollowing | includes : user._id;
-                  then unfollowTemplate;
-                  else followTemplate
-                "
-              ></div>
-              <ng-template #followTemplate>
-                <td *ngIf="isUser">
-                  <a
-                    (click)="followUser(user._id)"
-                    class="btn customfriendbutton"
-                    >Volgen</a
-                  >
-                </td>
-              </ng-template>
-              <ng-template #unfollowTemplate>
-                <td *ngIf="isUser">
-                  <a
-                    (click)="unfollowUser(user._id)"
-                    class="btn customcancelbutton"
-                    >Ontvolgen</a
-                  >
-                </td>
-              </ng-template>
+      <div class="col-12">
+        <div class="input-group mt-3">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="zoek op voornaam.."
+            aria-label="Zoek gebruiker"
+            [(ngModel)]="firstNameSearchTerm"
+          />
+          <input
+            type="text"
+            class="form-control"
+            placeholder="zoek op achternaam.."
+            aria-label="Zoek gebruiker"
+            [(ngModel)]="lastNameSearchTerm"
+          />
+        </div>
+      </div>
+      <div class="col-12">
+        <div class="table-responsive mb-5">
+          <table class="table tableborder table-dark">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Voornaam</th>
+                <th scope="col">Achternaam</th>
+                <th scope="col">Stad</th>
+                <th *ngIf="isUser || isAdmin" scope="col"></th>
+              </tr>
+            </thead>
+            <tbody *ngIf="users.length > 0">
+              <tr *ngFor="let user of filteredUsers; let i = index">
+                <th scope="row">{{ i + 1 }}</th>
+                <td>{{ user.firstName | titlecase }}</td>
+                <td>{{ user.lastName | titlecase }}</td>
+                <td>{{ user.city | titlecase }}</td>
+                <div
+                  *ngIf="
+                    currentlyFollowing | includes : user._id;
+                    then unfollowTemplate;
+                    else followTemplate
+                  "
+                ></div>
+                <ng-template #followTemplate>
+                  <td *ngIf="isUser">
+                    <a
+                      (click)="followUser(user._id)"
+                      class="btn customfriendbutton"
+                      >Volgen</a
+                    >
+                  </td>
+                </ng-template>
+                <ng-template #unfollowTemplate>
+                  <td *ngIf="isUser">
+                    <a
+                      (click)="unfollowUser(user._id)"
+                      class="btn customcancelbutton"
+                      >Ontvolgen</a
+                    >
+                  </td>
+                </ng-template>
 
-              <td *ngIf="isAdmin">
-                <a
-                  (click)="sweetAlertDeleteConfirmation(user._id)"
-                  class="btn customdeletebutton"
-                >
-                  Verwijderen
-                </a>
+                <td *ngIf="isAdmin">
+                  <a
+                    (click)="sweetAlertDeleteConfirmation(user._id)"
+                    class="btn customdeletebutton"
+                  >
+                    Verwijderen
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="users.length === 0">
+              <td colspan="5">
+                <h2 class="text-center">Er zijn geen leden gevonden!</h2>
               </td>
-            </tr>
-          </tbody>
-          <tbody *ngIf="users.length === 0">
-            <td colspan="5">
-              <h2 class="text-center">Er zijn geen leden gevonden!</h2>
-            </td>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</ng-template>
+
+<ng-template #loginTemplate>
+  <div class="container">
+    <div class="row backgrounddark">
+      <div class="col-12">
+        <h1 class="text-center">Log in om gebruikers weer te geven!</h1>
+      </div>
+      <div class="col-12">
+        <div class="text-center">
+          <a routerLink="/login" class="btn customloginbutton">Log in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

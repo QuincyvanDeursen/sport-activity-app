@@ -3,15 +3,50 @@ import { User } from '@sport-activity-app/domain';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { UserDocument } from '../Schemas/user.schema';
+import { SportEventDocument } from '../Schemas/sportEvent.schema';
+import * as bcrypt from 'bcrypt';
+import { Neo4jQueryService } from '../../neo4-j/neo4-j.service';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel('User') private readonly userModel: Model<UserDocument>
+    @InjectModel('User') private readonly userModel: Model<UserDocument>,
+    @InjectModel('SportEvent')
+    private readonly sportEventModel: Model<SportEventDocument>,
+    private readonly neo4jQueryService: Neo4jQueryService
   ) {}
+
+  ////////////////////////////////////////
+  //////////// Create User ///////////////
+  ////////////////////////////////////////
 
   //creating a user.
   async create(user: User): Promise<object> {
+    let userInMongoDB: { mongoId: string; firstName: string };
+    try {
+      userInMongoDB = await this.createUserInMongoDB(user);
+      const userIncreaeNeo4j = await this.createUserInNeo4j(
+        userInMongoDB.firstName,
+        userInMongoDB.mongoId
+      );
+      if (userIncreaeNeo4j && userInMongoDB) {
+        return {
+          statusCode: 201,
+          message: `User succesfully created`,
+        };
+      }
+    } catch (error) {
+      if (userInMongoDB) {
+        await this.userModel.findByIdAndDelete(userInMongoDB.mongoId).lean();
+      }
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  //create user in mongoDB
+  private async createUserInMongoDB(
+    user: User
+  ): Promise<{ mongoId: string; firstName: string }> {
     try {
       const createdUser = new this.userModel(user);
       createdUser.email = user.email.toLowerCase();
@@ -21,10 +56,11 @@ export class UserService {
       console.log(user);
 
       await createdUser.save();
-      return {
-        statusCode: 201,
-        message: `User ${createdUser.firstName} created`,
+      const userInMongoDB = {
+        mongoId: createdUser._id.toString(),
+        firstName: createdUser.firstName,
       };
+      return userInMongoDB;
     } catch (error) {
       if (error.code === 11000) {
         throw new HttpException(
@@ -36,6 +72,25 @@ export class UserService {
       }
     }
   }
+
+  //create user in neo4j
+  private async createUserInNeo4j(
+    userName: string,
+    userId: string
+  ): Promise<boolean> {
+    try {
+      await this.neo4jQueryService.write(
+        `CREATE (n:User {mongoId: "${userId}", name: "${userName}"}) RETURN n`
+      );
+      return true;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  ////////////////////////////////////////
+  //////////// Getting users /////////////
+  ////////////////////////////////////////
 
   //finding a user by email.
   async findUserByEmail(email: string): Promise<any> {
@@ -70,28 +125,99 @@ export class UserService {
     return result;
   }
 
+  ////////////////////////////////////////
+  //////////// Follow users //////////////
+  ////////////////////////////////////////
+
   //follow user
   async followUser(
     currentUserId: string,
     userToFollowId: string
   ): Promise<object> {
     console.log('follow user service (api) called');
-    const user: User = await this.userModel
+    let userInMongoDB;
+    try {
+      userInMongoDB = await this.followUserInMongoDB(
+        currentUserId,
+        userToFollowId
+      );
+      const userInNeo4j = await this.followUserInNeo4j(
+        currentUserId,
+        userToFollowId
+      );
+      if (userInMongoDB && userInNeo4j) {
+        return {
+          statusCode: 201,
+          message: `User ${userInMongoDB.firstName} now follows user with id: ${userToFollowId}`,
+        };
+      }
+    } catch (error) {
+      //rolback
+      if (userInMongoDB) {
+        await this.userModel
+          .findByIdAndUpdate(
+            currentUserId,
+            { $pull: { followingUsers: userToFollowId } },
+            { new: true }
+          )
+          .lean();
+      }
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  private async followUserInMongoDB(currentUserId, userToFollowId) {
+    console.log('follow user service (api) called (mongoDB)');
+    if (currentUserId === userToFollowId) {
+      throw new HttpException('You cannot follow yourself', 400);
+    }
+    const userToFollow = await this.userModel.findById(userToFollowId).lean();
+    if (!userToFollow) {
+      throw new HttpException('User to follow not found', 404);
+    }
+
+    const currentUser = await this.userModel.findById(currentUserId).lean();
+    if (!currentUser) {
+      throw new HttpException('currentUser not found', 404);
+    }
+    await this.userModel
       .findByIdAndUpdate(
         currentUserId,
         { $addToSet: { followingUsers: userToFollowId } },
         { new: true }
       )
       .lean();
-    if (!user) {
-      throw new HttpException('User not found', 404);
-    }
+
     //neo4j needs to be implemented here
     return {
       statusCode: 201,
-      message: `User ${user.firstName} now follows user with id: ${userToFollowId}`,
+      message: `User with id ${currentUserId} now follows user with id: ${userToFollowId}`,
     };
   }
+
+  //follow user in neo4j
+  private async followUserInNeo4j(
+    currentUserId: string,
+    userToFollowId: string
+  ): Promise<boolean> {
+    console.log('follow user service (api) called (neo4j)');
+    try {
+      await this.neo4jQueryService.write(
+        `MATCH (a:User {mongoId: "${currentUserId}"}) 
+        MATCH (b:User {mongoId: "${userToFollowId}"}) 
+        WHERE a <> b 
+        CREATE (a)-[r:FOLLOWS]->(b) 
+        `
+      );
+      return true;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  ////////////////////////////////////////
+  //////////// Unfollow users ////////////
+  ////////////////////////////////////////
 
   //unfollow user
   async unfollowUser(
@@ -99,49 +225,185 @@ export class UserService {
     userToUnfollowId: string
   ): Promise<object> {
     console.log('unfollow user service (api) called');
-    const user: User = await this.userModel
-      .findByIdAndUpdate(
+    let mongoResult;
+    try {
+      mongoResult = await this.unfollowUserInMongoDB(
         currentUserId,
-        { $pull: { followingUsers: userToUnfollowId } },
-        { new: true }
-      )
-      .lean();
-    if (!user) {
-      throw new HttpException('User not found', 404);
+        userToUnfollowId
+      );
+      const neo4jResult = await this.unfollowUserInNeo4j(
+        currentUserId,
+        userToUnfollowId
+      );
+      console.log(currentUserId);
+      if (mongoResult && neo4jResult) {
+        return {
+          statusCode: 201,
+          message: `User with id ${currentUserId} now no longer follows user with id: ${userToUnfollowId}`,
+        };
+      }
+    } catch (error) {
+      return {
+        statusCode: 400,
+        message: error.message,
+      };
     }
-    //neo4j needs to be implemented here
-    return {
-      statusCode: 201,
-      message: `User ${user.firstName} now no longer follows user with id: ${userToUnfollowId}`,
-    };
   }
+
+  private async unfollowUserInMongoDB(
+    currentUserId: string,
+    userToUnfollowId: string
+  ): Promise<boolean> {
+    console.log('unfollow user service (api) called (mongoDB)');
+    try {
+      if (currentUserId === userToUnfollowId) {
+        throw new HttpException('You cannot unfollow yourself', 400);
+      }
+      const userToFollow = await this.userModel
+        .findById(userToUnfollowId)
+        .lean();
+      if (!userToFollow) {
+        throw new HttpException('User to unfollow not found', 404);
+      }
+
+      const currentUser = await this.userModel.findById(currentUserId).lean();
+      if (!currentUser) {
+        throw new HttpException('currentUser not found', 404);
+      }
+      await this.userModel
+        .findByIdAndUpdate(
+          currentUserId,
+          { $pull: { followingUsers: userToUnfollowId } },
+          { new: true }
+        )
+        .lean();
+      return true;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  //unfollow user in neo4j
+  private async unfollowUserInNeo4j(
+    currentUserId: string,
+    userToUnfollowId: string
+  ): Promise<boolean> {
+    console.log('unfollow user service (api) called (neo4j)');
+    try {
+      await this.neo4jQueryService.write(
+        `MATCH (a:User {mongoId: "${currentUserId}"})
+        MATCH (b:User {mongoId: "${userToUnfollowId}"})
+        WHERE a <> b
+        MATCH (a)-[r:FOLLOWS]->(b)
+        DELETE r
+        `
+      );
+      return true;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  ////////////////////////////////////////
+  //////////// Delete   //////////////////
+  ////////////////////////////////////////
 
   //delete user
   async deleteUser(_id: string): Promise<object> {
     console.log('deleteUser from user.service.ts (api) called');
-    const user = await this.userModel.findByIdAndDelete(_id).lean();
-    await this.userModel
-      .updateMany({}, { $pull: { followingUsers: _id } })
-      .lean();
-    if (!user) {
-      throw new HttpException('User not found', 404);
+    let mongoResult;
+    try {
+      mongoResult = await this.deleteUserInMongoDB(_id);
+      const neo4jResult = await this.deleteUserInNeo4j(_id);
+      if (mongoResult && neo4jResult) {
+        return {
+          statusCode: 200,
+          message: `User ${mongoResult.firstName} deleted`,
+        };
+      }
+    } catch (error) {
+      return {
+        statusCode: 400,
+        message: error.message,
+      };
     }
-    return {
-      statusCode: 200,
-      message: `User ${user.firstName} deleted`,
-    };
   }
+
+  private async deleteUserInMongoDB(_id: string): Promise<boolean> {
+    console.log('deleteUser from user.service.ts (api) called (mongoDB)');
+    try {
+      const user = await this.userModel.findByIdAndDelete(_id).lean();
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+
+      //delete all references to user in other collections
+      await this.userModel
+        .updateMany({}, { $pull: { followingUsers: _id } })
+        .lean();
+      await this.sportEventModel
+        .updateMany({}, { $pull: { enrolledParticipants: _id } })
+        .lean();
+
+      return true;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  private async deleteUserInNeo4j(_id: string): Promise<boolean> {
+    console.log('deleteUser from user.service.ts (api) called (neo4j)');
+    try {
+      await this.neo4jQueryService.write(
+        `MATCH (a:User {mongoId: "${_id}"})
+        DETACH DELETE a
+        `
+      );
+      return true;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  ////////////////////////////////////////
+  ////////////     Update   //////////////
+  ////////////////////////////////////////
 
   //update account settings (user)
   async updateAccountSettings(newUser: User): Promise<object> {
     try {
+      console.log('updateAccountSettings from user.service.ts (api) called');
+      const user = new this.userModel();
+      Object.assign(user, newUser);
+
+      const validationError = user.validateSync();
+      if (validationError) {
+        throw new HttpException(validationError.message, 400);
+      }
+
+      //hash password
+      if (newUser.password) {
+        const salt = await bcrypt.genSalt(10);
+        newUser.password = await bcrypt.hash(newUser.password, salt);
+      }
+
       const userUpdateResult = await this.userModel
         .findByIdAndUpdate(newUser._id, { $set: newUser }, { new: true })
         .lean();
+
       if (!userUpdateResult) {
         throw new HttpException('User not found', 404);
       }
-      console.log('userUpdateResult: ', userUpdateResult);
+      //update sportclub in events
+      if (newUser.sportclub) {
+        await this.sportEventModel
+          .updateMany(
+            { hostId: newUser._id },
+            { $set: { sportclub: newUser.sportclub } }
+          )
+          .lean();
+      }
+
       return {
         statusCode: 200,
         message: `User with id: ${newUser._id} updated`,
@@ -156,5 +418,74 @@ export class UserService {
         throw new HttpException(error.message, 400);
       }
     }
+  }
+
+  //////////////////////////////////////////
+  ////////////     Statistics   ///////////
+  ////////////////////////////////////////
+
+  // get employee statistics
+  async getEmployeeStatistics(hostId: string): Promise<any> {
+    const now = new Date();
+
+    const pipeline = [
+      // Match only sport events hosted by the specified host
+      {
+        $match: {
+          hostId: new mongoose.Types.ObjectId(hostId),
+        },
+      },
+      // Add a computed field to calculate the income for each sport event
+      {
+        $addFields: {
+          income: { $multiply: ['$price', { $size: '$enrolledParticipants' }] },
+          potentialIncome: {
+            $multiply: ['$price', '$maximumNumberOfParticipants'],
+          },
+          completedEvents: { $lte: ['$startDateAndTime', now] },
+        },
+      },
+      // Group the sport events by the host and calculate aggregate values
+      {
+        $group: {
+          _id: '$hostId',
+          totalEvents: { $sum: 1 },
+          totalParticipants: { $sum: { $size: '$enrolledParticipants' } },
+          totalIncome: {
+            $sum: {
+              $cond: [{ $lte: ['$startDateAndTime', now] }, '$income', 0],
+            },
+          },
+          avgPrice: { $avg: '$price' },
+          maxPrice: { $max: '$price' },
+          minPrice: { $min: '$price' },
+          avgDuration: { $avg: '$durationInMinutes' },
+          maxDuration: { $max: '$durationInMinutes' },
+          minDuration: { $min: '$durationInMinutes' },
+          avgParticipants: { $avg: { $size: '$enrolledParticipants' } },
+          maxParticipants: { $max: { $size: '$enrolledParticipants' } },
+          minParticipants: { $min: { $size: '$enrolledParticipants' } },
+          avgIncome: { $avg: '$income' },
+          maxIncome: { $max: '$income' },
+          minIncome: { $min: '$income' },
+          potentialIncome: {
+            $sum: {
+              $cond: [
+                { $gte: ['$startDateAndTime', now] },
+                '$potentialIncome',
+                0,
+              ],
+            },
+          },
+          totalCompletedEvents: {
+            $sum: { $cond: [{ $lte: ['$startDateAndTime', now] }, 1, 0] },
+          },
+        },
+      },
+    ];
+
+    const employeeStatistics = await this.sportEventModel.aggregate(pipeline);
+
+    return employeeStatistics;
   }
 }

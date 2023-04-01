@@ -103,9 +103,23 @@ export class UserService {
     console.log(httpOptions.headers);
     const body = JSON.stringify(user);
     const result = this.http
-      .put<object>(
-        `${environment.SERVER_API_URL}user/accountsettings`,
-        body,
+      .put<object>(`${environment.SERVER_API_URL}user`, body, httpOptions)
+      .pipe(
+        map((response: any) => {
+          return response.results;
+        })
+      );
+
+    return result;
+  }
+
+  //get employee statistics request
+  getEmployeeStatistics(id: string): Observable<any> {
+    console.log('get employee statistics ui-service called');
+    console.log(httpOptions.headers);
+    const result = this.http
+      .get<object>(
+        `${environment.SERVER_API_URL}user/statistics/${id}`,
         httpOptions
       )
       .pipe(

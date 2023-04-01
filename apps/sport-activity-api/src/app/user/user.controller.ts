@@ -5,20 +5,23 @@ import {
   UseGuards,
   Get,
   Request,
-  Query,
   Delete,
   Put,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 
 import { Role, User } from '@sport-activity-app/domain';
+import { Neo4jQueryService } from '../../neo4-j/neo4-j.service';
 import { HasRoles } from '../auth/AuthTsFiles/roles.decorator';
 import { RolesGuard } from '../auth/AuthTsFiles/roles.guard';
 import { UserService } from './user.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly neo4jQueryService: Neo4jQueryService
+  ) {}
 
   //register endpoint
   @Post('register')
@@ -36,6 +39,19 @@ export class UserController {
     return result;
   }
 
+  //test neo4j
+  @Get('/test')
+  async testNeo4j(): Promise<object> {
+    console.log('test neo4j called from user.controller.ts (api)');
+
+    //create
+    await this.neo4jQueryService.write(
+      'CREATE (n:Person {name: "quincy"}) RETURN n'
+    );
+    const result = await this.neo4jQueryService.read('MATCH (n) RETURN n');
+    return result;
+  }
+
   //get user by id endpoint
   @Get(':id')
   async getUserById(@Request() req): Promise<User> {
@@ -44,7 +60,7 @@ export class UserController {
   }
 
   //follow user endpoint
-  @HasRoles(Role.User)
+  @HasRoles(Role.User, Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post('follow')
   async followUser(
@@ -58,15 +74,13 @@ export class UserController {
   }
 
   //unfollow user endpoint
-  @HasRoles(Role.User)
+  @HasRoles(Role.User, Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post('unfollow')
   async unfollowUser(
     @Body() followRequest: { currentUserId: string; userToUnfollowId: string }
   ): Promise<object> {
-    console.log(
-      `unfollow user controller (api) called with user to unfollowId: ${followRequest.userToUnfollowId}`
-    );
+    console.log(`unfollow user controller (api) called.`);
     const result = await this.userService.unfollowUser(
       followRequest.currentUserId,
       followRequest.userToUnfollowId
@@ -88,19 +102,23 @@ export class UserController {
     return result;
   }
 
-  //profile
-  @Get('profile')
-  getProfile(@Request() req) {
-    return 'werkt';
-  }
-
   //update account settings endpoint
-  @HasRoles(Role.User, Role.Employee)
+  @HasRoles(Role.User, Role.Employee, Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Put('accountsettings')
+  @Put()
   async updateAccountSettings(@Body() user: User): Promise<object> {
     console.log('update account settings called from user.controller.ts (api)');
     const result = await this.userService.updateAccountSettings(user);
+    return result;
+  }
+
+  //update account settings endpoint
+  @HasRoles(Role.Employee, Role.Admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Get('statistics/:id')
+  async getEmployeeStatistics(@Request() req): Promise<object> {
+    console.log('get employee statistics called from user.controller.ts (api)');
+    const result = await this.userService.getEmployeeStatistics(req.params.id);
     return result;
   }
 }

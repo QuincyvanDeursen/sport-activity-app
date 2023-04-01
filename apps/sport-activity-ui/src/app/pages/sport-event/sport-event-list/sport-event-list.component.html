@@ -1,0 +1,127 @@
+<div class="container">
+  <div class="row backgrounddark justify-content-center py-4">
+    <div class="col-12 col-lg-7">
+      <h1 class="text-center">Sport Evenementen</h1>
+    </div>
+    <div
+      *ngIf="isEmployee"
+      class="col-12 col-lg-2 d-flex my-auto justify-content-center"
+    >
+      <a
+        *ngIf="hostedSportEventsIsShowing"
+        class="btn customcreatebutton"
+        (click)="getSportEvents()"
+        >Toon Alles</a
+      >
+      <a
+        *ngIf="!hostedSportEventsIsShowing"
+        class="btn customcreatebutton"
+        (click)="getHostedSportEvents()"
+        >Mijn Evenementen</a
+      >
+    </div>
+
+    <div class="col-12 col-lg-2 py-2 d-flex my-auto justify-content-center">
+      <a
+        *ngIf="recommendationIsShowing && isUser"
+        class="btn customcreatebutton"
+        (click)="getSportEvents()"
+        >Toon Alles</a
+      >
+
+      <a
+        *ngIf="!recommendationIsShowing && isUser"
+        class="btn customcreatebutton"
+        (click)="getRecommendedSportEvents()"
+        >Toon Aanbevelingen</a
+      >
+    </div>
+    <div class="col-12 col-lg-2 d-flex my-auto justify-content-center">
+      <a
+        *ngIf="enrolledSportEventsIsShowing && isUser"
+        class="btn customcreatebutton"
+        (click)="getSportEvents()"
+        >Toon Alles</a
+      >
+
+      <a
+        *ngIf="!enrolledSportEventsIsShowing && isUser"
+        class="btn customcreatebutton"
+        (click)="getEnrolledSportEvents()"
+        >Toon Inschrijvingen</a
+      >
+    </div>
+    <!-- Search bar -->
+    <div class="col-12">
+      <div class="input-group mt-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="zoek op titel.."
+          aria-label="Zoek op titel"
+          [(ngModel)]="sportEventTitle"
+        />
+        <input
+          type="text"
+          class="form-control"
+          placeholder="zoek op stad.."
+          aria-label="Zoek op stad"
+          [(ngModel)]="sportEventCity"
+        />
+      </div>
+    </div>
+    <!-- Table -->
+    <div class="col-12">
+      <div class="table-responsive mb-2">
+        <table class="table tableborder table-dark">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Titel</th>
+              <th scope="col">Locatie</th>
+              <th scope="col">Prijs</th>
+              <th scope="col">Datum</th>
+              <th scope="col">Deelnemers</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody *ngIf="sportEvents.length > 0">
+            <tr *ngFor="let sportEvent of filteredSportEvents; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ sportEvent.title | titlecase }}</td>
+              <td>{{ sportEvent.sportclub.address.city | titlecase }}</td>
+              <td>€{{ sportEvent.price }}</td>
+              <td>{{ sportEvent.startDateAndTime | date : 'medium' }}</td>
+              <td *ngIf="!sportEvent.isFull">
+                {{ sportEvent.enrolledParticipantsCount }}/{{
+                  sportEvent.maximumNumberOfParticipants
+                }}
+              </td>
+              <td *ngIf="sportEvent.isFull">Vol</td>
+              <td>
+                <a
+                  routerLink="{{ sportEvent._id }}"
+                  class="btn customdetailbutton"
+                >
+                  Bekijken
+                </a>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="sportEvents.length === 0">
+            <td colspan="7">
+              <h2 class="text-center">Er zijn geen Evenementen gevonden!</h2>
+            </td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div *ngIf="isEmployee" class="row my-2">
+      <div class="col-12 d-flex justify-content-center">
+        <a class="btn customcreatebutton" [routerLink]="'/sportevents/create'"
+          >Maak een evenement aan</a
+        >
+      </div>
+    </div>
+  </div>
+</div>

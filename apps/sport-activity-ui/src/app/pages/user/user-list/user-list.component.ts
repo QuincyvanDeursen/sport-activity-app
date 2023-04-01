@@ -78,7 +78,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   }
 
   ///////////////////////////////////////////////////////////
-  //////////       Get users functionality      ////////////////
+  //////////       Get users functionality      /////////////
   ///////////////////////////////////////////////////////////
 
   //get all users
@@ -89,7 +89,10 @@ export class UserListComponent implements OnInit, OnDestroy {
         this.users = v;
         this.filteredUsers = v;
       },
-      error: () => SweetAlert.showErrorAlert('Er is iets fout gegaan'),
+      error: (e) =>
+        SweetAlert.showErrorAlert(
+          'Er is iets fout gegaan, mogelijk bestaan er geen users!'
+        ),
       complete: () => console.log('getting al users complete (ui)'),
     });
   }
@@ -171,7 +174,7 @@ export class UserListComponent implements OnInit, OnDestroy {
         userToFollowId,
       })
       .subscribe({
-        next: (v) => {
+        next: () => {
           this.currentUser.followingUsers?.push(userToFollowId);
           this.updateFollowingUsersArrayUpOnFollowing(userToFollowId);
           SweetAlert.showSuccessAlert('Je volgt deze gebruiker nu!');
@@ -234,8 +237,6 @@ export class UserListComponent implements OnInit, OnDestroy {
       this.currentUser = this.loginService.currentUser;
       this.currentUserHasRoleAdmin();
       this.currentUserHasRoleUser();
-      console.log('4');
-      console.log(this.currentUser.followingUsers);
       this.currentlyFollowing = this.currentUser.followingUsers;
     }
   }

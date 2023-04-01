@@ -1,0 +1,12 @@
+.backgrounddarkcolumn {
+  background-color: rgba(29, 29, 29, 0.798);
+  border-radius: 25px;
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.fancynumber {
+  color: rgb(179, 250, 179);
+}

@@ -1,0 +1,89 @@
+<div *ngIf="dashboard && isEmployee">
+  <div class="container">
+    <div class="row my-1 justify-content-center">
+      <div class="col-12 backgrounddarkcolumn">
+        <h1 class="text-center">
+          Welkom op jouw dashboard {{ currentUser?.firstName | titlecase }}
+        </h1>
+      </div>
+    </div>
+    <div class="row justify-content-around">
+      <div
+        class="col-12 col-lg-3 d-flex-column backgrounddarkcolumn text-center py-5 my-2"
+      >
+        <h4>Jij hebt in totaal</h4>
+        <h1 class="fancynumber">{{ dashboard.totalEvents }}</h1>
+        <h4>evenementen georganiseerd.</h4>
+      </div>
+      <div
+        class="col-12 col-lg-3 d-flex-column backgrounddarkcolumn text-center my-2 py-5"
+      >
+        <h4>In totaal hebben</h4>
+        <h1 class="fancynumber">{{ dashboard.totalParticipants }}</h1>
+        <h4>gebruikers deelgenomen in jouw evenementen.</h4>
+      </div>
+      <div
+        class="col-12 col-lg-2 d-flex-column backgrounddarkcolumn text-center my-2 py-5"
+      >
+        <h4>In totaal heb jij</h4>
+        <h1 class="fancynumber">€{{ dashboard.totalIncome }}</h1>
+        <h4>opgehaald.</h4>
+      </div>
+      <div
+        class="col-12 col-lg-2 d-flex-column backgrounddarkcolumn text-center my-2 py-5"
+      >
+        <h4>Je haalt potentieel nog</h4>
+        <h1 class="fancynumber">€{{ dashboard.potentialIncome }}</h1>
+        <h4>Op.</h4>
+      </div>
+    </div>
+    <div class="row justify-content-around">
+      <div
+        class="col-12 col-lg-7 d-flex-column backgrounddarkcolumn text-center my-2 py-5"
+      >
+        <h4>Gemiddeld kost één van jouw evenementen:</h4>
+        <h1 class="fancynumber py-3">€{{ dashboard.avgPrice }}</h1>
+        <h4>De goedkoopste die je ooit georganiseerd hebt kostte:</h4>
+        <h1 class="fancynumber py-3">€{{ dashboard.minPrice }}</h1>
+        <h4>De duurste die je ooit georganiseerd hebt kostte:</h4>
+        <h1 class="fancynumber py-3">€{{ dashboard.maxPrice }}</h1>
+      </div>
+      <div
+        class="col-12 col-lg-4 d-flex-column backgrounddarkcolumn text-center my-2 py-5"
+      >
+        <h4>Gemiddeld duurt één van jouw evenementen:</h4>
+        <h1 class="fancynumber py-1">{{ dashboard.avgDuration }}min</h1>
+        <h4>De kortste die je ooit georganiseerd hebt duurde:</h4>
+        <h1 class="fancynumber py-1">{{ dashboard.minDuration }}min</h1>
+        <h4>De langste die je ooit georganiseerd hebt duurde:</h4>
+        <h1 class="fancynumber py-1">{{ dashboard.maxDuration }}min</h1>
+      </div>
+    </div>
+    <div class="row justify-content-around">
+      <div
+        class="col-12 col-lg-4 d-flex-column backgrounddarkcolumn text-center my-2 py-5"
+      >
+        <h4>Gemiddeld doen er</h4>
+        <h1 class="fancynumber py-3">{{ dashboard.avgParticipants }}</h1>
+        <h4 class="mb-4">gebruikers per evenement mee.</h4>
+        <h4 class="mt-2">Het kleinste aantal deelnemers in één evenment was</h4>
+        <h1 class="fancynumber py-3">{{ dashboard.minParticipants }}</h1>
+        <h4>Het grooste aantal deelnemers in één evenment was</h4>
+        <h1 class="fancynumber py-3">{{ dashboard.maxParticipants }}</h1>
+      </div>
+      <div
+        class="col-12 col-lg-7 d-flex-column backgrounddarkcolumn text-center my-2 py-5"
+      >
+        <h4>Gemiddeld haal jij</h4>
+        <h1 class="fancynumber py-3">€{{ dashboard.avgIncome }}</h1>
+        <h4 class="mb-4">op per evenement.</h4>
+        <h4 class="mt-2">
+          Het minste dat je ooit opgehaald hebt met een evenement was:
+        </h4>
+        <h1 class="fancynumber py-3">€{{ dashboard.minIncome }}</h1>
+        <h4>Het meeste dat je ooit opgehaald hebt met een evenement was:</h4>
+        <h1 class="fancynumber py-3">€{{ dashboard.maxIncome }}</h1>
+      </div>
+    </div>
+  </div>
+</div>

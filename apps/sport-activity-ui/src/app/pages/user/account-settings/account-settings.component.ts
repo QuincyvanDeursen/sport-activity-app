@@ -71,7 +71,7 @@ export class AccountSettingsComponent implements OnInit, OnDestroy {
       this.newUserData = { ...this.loginService.currentUser };
       this.hasRoleEmployee();
       this.newUserData.password =
-        this.loginService.userIdentity?.password || '';
+        this.loginService.userIdentityStored?.password || '';
     }
     console.log('new user data', this.newUserData);
   }

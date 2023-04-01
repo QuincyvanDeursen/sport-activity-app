@@ -53,3 +53,17 @@
   border-radius: 10px;
   border: 1px solid #000000;
 }
+
+.customloginbutton {
+  background-color: #000000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #1044f2;
+}
+
+.customloginbutton:hover {
+  background-color: #1044f2;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #000000;
+}

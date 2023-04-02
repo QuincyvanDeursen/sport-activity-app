@@ -4,7 +4,7 @@ import { SportEvent, User } from '@sport-activity-app/domain';
 import { Model } from 'mongoose';
 import { SportEventDocument } from '../app/Schemas/sportEvent.schema';
 import { UserDocument } from '../app/Schemas/user.schema';
-import { Neo4jQueryService } from '../neo4-j/neo4-j.service';
+import { Neo4jService } from 'nest-neo4j/dist';
 
 @Injectable()
 export class SportEventService {
@@ -13,7 +13,7 @@ export class SportEventService {
     private readonly sportEventModel: Model<SportEventDocument>,
     @InjectModel('User')
     private readonly userModel: Model<UserDocument>,
-    private readonly neo4jQueryService: Neo4jQueryService
+    private readonly Neo4jService: Neo4jService
   ) {}
 
   // get all sport events.
@@ -82,7 +82,7 @@ export class SportEventService {
   ): Promise<object> {
     console.log('create sportevent service (api) called (Neo4j)');
     try {
-      const createdSportEventInNeo4j = await this.neo4jQueryService.write(
+      const createdSportEventInNeo4j = await this.Neo4jService.write(
         `CREATE (n:SportEvent {mongoId: "${mongoId}", Name: "${title}"})`
       );
       return createdSportEventInNeo4j;
@@ -154,7 +154,7 @@ export class SportEventService {
   private async deleteEventInNeo4j(mongoId: string): Promise<boolean> {
     console.log('delete sportevent service (api) called (Neo4j)');
     try {
-      await this.neo4jQueryService.write(
+      await this.Neo4jService.write(
         `MATCH (n:SportEvent {mongoId: "${mongoId}"}) DETACH DELETE n`
       );
       return true;
@@ -263,7 +263,7 @@ export class SportEventService {
   ): Promise<boolean> {
     console.log('enrollUserToSportEvent (api) called (Neo4j)');
     try {
-      this.neo4jQueryService.write(
+      this.Neo4jService.write(
         `MATCH (n:User {mongoId: "${userId}"}) MATCH (m:SportEvent {mongoId: "${sportEventId}"}) CREATE (n)-[r:PARTICIPATES]->(m)`
       );
       return true;
@@ -337,7 +337,7 @@ export class SportEventService {
   ): Promise<boolean> {
     console.log('unenrollUserToSportEvent (api) called (Neo4j)');
     try {
-      this.neo4jQueryService.write(
+      this.Neo4jService.write(
         `MATCH (n:User {mongoId: "${userId}"}) MATCH (m:SportEvent {mongoId: "${sportEventId}"})
         MATCH (n)-[r:PARTICIPATES]->(m)
          DELETE r`
@@ -382,19 +382,21 @@ export class SportEventService {
       console.log(userId);
 
       //get recommended sport events from Neo4j
-      const recommendedSportEvents = await this.neo4jQueryService.read(
+      const recommendedSportEvents = await this.Neo4jService.read(
         `MATCH (me:User)-[:FOLLOWS]->(following:User)-[:PARTICIPATES]->(event:SportEvent)
         WHERE me.mongoId = '${userId}'
         RETURN event
         LIMIT 10`
       );
-      const mongoIdSportEvents = recommendedSportEvents.map(
-        (item) => item.event.properties.mongoId
-      );
 
-      //get recommended sport events from MongoDB
+      const mongoIds = [];
+      for (const record of recommendedSportEvents.records) {
+        const mongoId = record.get('event').properties.mongoId;
+        mongoIds.push(mongoId);
+      }
+
       const sportEvents = await this.sportEventModel.find({
-        _id: { $in: mongoIdSportEvents },
+        _id: { $in: mongoIds },
       });
 
       return sportEvents;

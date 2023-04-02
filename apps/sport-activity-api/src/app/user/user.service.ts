@@ -1,11 +1,11 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { User } from '@sport-activity-app/domain';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { UserDocument } from '../Schemas/user.schema';
 import { SportEventDocument } from '../Schemas/sportEvent.schema';
 import * as bcrypt from 'bcrypt';
-import { Neo4jQueryService } from '../../neo4-j/neo4-j.service';
+import { Neo4jService } from 'nest-neo4j/dist';
 
 @Injectable()
 export class UserService {
@@ -13,7 +13,7 @@ export class UserService {
     @InjectModel('User') private readonly userModel: Model<UserDocument>,
     @InjectModel('SportEvent')
     private readonly sportEventModel: Model<SportEventDocument>,
-    private readonly neo4jQueryService: Neo4jQueryService
+    private readonly neo4jService: Neo4jService
   ) {}
 
   ////////////////////////////////////////
@@ -44,7 +44,7 @@ export class UserService {
   }
 
   //create user in mongoDB
-  private async createUserInMongoDB(
+  async createUserInMongoDB(
     user: User
   ): Promise<{ mongoId: string; firstName: string }> {
     try {
@@ -79,7 +79,7 @@ export class UserService {
     userId: string
   ): Promise<boolean> {
     try {
-      await this.neo4jQueryService.write(
+      await this.neo4jService.write(
         `CREATE (n:User {mongoId: "${userId}", name: "${userName}"}) RETURN n`
       );
       return true;
@@ -202,7 +202,7 @@ export class UserService {
   ): Promise<boolean> {
     console.log('follow user service (api) called (neo4j)');
     try {
-      await this.neo4jQueryService.write(
+      await this.neo4jService.write(
         `MATCH (a:User {mongoId: "${currentUserId}"}) 
         MATCH (b:User {mongoId: "${userToFollowId}"}) 
         WHERE a <> b 
@@ -290,7 +290,7 @@ export class UserService {
   ): Promise<boolean> {
     console.log('unfollow user service (api) called (neo4j)');
     try {
-      await this.neo4jQueryService.write(
+      await this.neo4jService.write(
         `MATCH (a:User {mongoId: "${currentUserId}"})
         MATCH (b:User {mongoId: "${userToUnfollowId}"})
         WHERE a <> b
@@ -354,7 +354,7 @@ export class UserService {
   private async deleteUserInNeo4j(_id: string): Promise<boolean> {
     console.log('deleteUser from user.service.ts (api) called (neo4j)');
     try {
-      await this.neo4jQueryService.write(
+      await this.neo4jService.write(
         `MATCH (a:User {mongoId: "${_id}"})
         DETACH DELETE a
         `

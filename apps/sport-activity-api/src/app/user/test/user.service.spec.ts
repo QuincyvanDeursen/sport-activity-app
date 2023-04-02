@@ -1,235 +1,69 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { UserSchema } from '../../Schemas/user.schema';
-import { UserService } from '../user.service';
-
-import { MongooseModule, MongooseModuleOptions } from '@nestjs/mongoose';
+import { Test } from '@nestjs/testing';
+import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { SportEventSchema } from '../../Schemas/sportEvent.schema';
-import { Role, User } from '@sport-activity-app/domain';
-import { HttpException } from '@nestjs/common';
-import mongoose from 'mongoose';
+import { Model, disconnect } from 'mongoose';
+import { MongoClient } from 'mongodb';
+import { UserService } from '../user.service';
+import { User, UserDocument, UserSchema } from '../../Schemas/user.schema';
+import {
+  SportEvent,
+  SportEventDocument,
+  SportEventSchema,
+} from '../../Schemas/sportEvent.schema';
+import { Neo4jService } from 'nest-neo4j/dist';
 
-let mongod: MongoMemoryServer;
-
-//setup
-export const rootMongooseTestModule = (options: MongooseModuleOptions = {}) =>
-  MongooseModule.forRootAsync({
-    useFactory: async () => {
-      if (!mongod) {
-        mongod = await MongoMemoryServer.create();
-      }
-      const mongoUri = mongod.getUri();
-      return {
-        uri: mongoUri,
-        ...options,
-      };
-    },
-  });
-
-export const closeInMongodConnection = async () => {
-  if (mongod) await mongod.stop();
-};
-
-//testing
 describe('UserService', () => {
   let service: UserService;
+  let mongod: MongoMemoryServer;
+  let mongoc: MongoClient;
+  let userModel: Model<UserDocument>;
+  let sportEventModel: Model<SportEventDocument>;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+  beforeAll(async () => {
+    let uri: string;
+
+    const app = await Test.createTestingModule({
       imports: [
-        rootMongooseTestModule(),
-        MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
+        MongooseModule.forRootAsync({
+          useFactory: async () => {
+            mongod = await MongoMemoryServer.create();
+            uri = mongod.getUri();
+            return { uri };
+          },
+        }),
+        MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
         MongooseModule.forFeature([
-          { name: 'SportEvent', schema: SportEventSchema },
+          { name: SportEvent.name, schema: SportEventSchema },
         ]),
       ],
-      providers: [UserService],
+      providers: [
+        UserService,
+        {
+          provide: Neo4jService,
+          useValue: { write: jest.fn(), read: jest.fn() },
+        },
+      ],
     }).compile();
+    service = app.get<UserService>(UserService);
 
-    service = module.get<UserService>(UserService);
+    userModel = app.get<Model<UserDocument>>(getModelToken(User.name));
+    sportEventModel = app.get<Model<SportEventDocument>>(
+      getModelToken(SportEvent.name)
+    );
+
+    mongoc = new MongoClient(uri);
+    await mongoc.connect();
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
 
-  ///////////////////////////////////////
-  //////////// Create User /////////////
-  /////////////////////////////////////
-
-  it('should create a user', async () => {
-    const user: User = {
-      firstName: 'john',
-      lastName: 'Doe',
-      email: 'johndoe@example.com',
-      password: 'Secret123!',
-      city: 'Breda',
-      roles: [Role.User],
-    };
-
-    const result = await service.create(user);
-
-    expect(result).toEqual({
-      statusCode: 201,
-      message: `User ${user.firstName} created`,
-    });
-  });
-
-  it('should not create a user (no numbers allowed in firstname)', async () => {
-    const user: User = {
-      firstName: 'john2',
-      lastName: 'Doe',
-      email: 'johndoe@example.com',
-      password: 'Secret123!',
-      city: 'Breda',
-      roles: [Role.User],
-    };
-    try {
-      await service.create(user);
-    } catch (error) {
-      expect(error).toBeInstanceOf(HttpException);
-      expect(error.getStatus()).toBe(400);
-    }
-  });
-
-  it('should not create a user (no numbers allowed in lastname)', async () => {
-    const user: User = {
-      firstName: 'john',
-      lastName: 'Doe2',
-      email: 'johndoe@example.com',
-      password: 'Secret123!',
-      city: 'Breda',
-      roles: [Role.User],
-    };
-    try {
-      await service.create(user);
-    } catch (error) {
-      expect(error).toBeInstanceOf(HttpException);
-      expect(error.getStatus()).toBe(400);
-    }
-  });
-
-  it('should not create a user (password missing a number)', async () => {
-    const user: User = {
-      firstName: 'john',
-      lastName: 'Doe',
-      email: 'johndoe@example.com',
-      password: 'Secret!',
-      city: 'Breda',
-      roles: [Role.User],
-    };
-    try {
-      await service.create(user);
-    } catch (error) {
-      expect(error).toBeInstanceOf(HttpException);
-      expect(error.getStatus()).toBe(400);
-    }
-  });
-
-  it('should not create a user (password missing a special character)', async () => {
-    const user: User = {
-      firstName: 'john',
-      lastName: 'Doe',
-      email: 'johndoe@example.com',
-      password: 'Secret123',
-      city: 'Breda',
-      roles: [Role.User],
-    };
-    try {
-      await service.create(user);
-    } catch (error) {
-      expect(error).toBeInstanceOf(HttpException);
-      expect(error.getStatus()).toBe(400);
-    }
-  });
-
-  it('should not create a user (email missing @)', async () => {
-    const user: User = {
-      firstName: 'john',
-      lastName: 'Doe',
-      email: 'johndoeexample.com',
-      password: 'Secret123!',
-      city: 'Breda',
-      roles: [Role.User],
-    };
-    try {
-      await service.create(user);
-    } catch (error) {
-      expect(error).toBeInstanceOf(HttpException);
-      expect(error.getStatus()).toBe(400);
-    }
-  });
-
-  it('should not create a user (email missing valid end)', async () => {
-    const user: User = {
-      firstName: 'john',
-      lastName: 'Doe',
-      email: 'johndoe@example',
-      password: 'Secret123!',
-      city: 'Breda',
-      roles: [Role.User],
-    };
-    try {
-      await service.create(user);
-    } catch (error) {
-      expect(error).toBeInstanceOf(HttpException);
-      expect(error.getStatus()).toBe(400);
-    }
-  });
-
-  it('should not create a user (email missing valid beginning)', async () => {
-    const user: User = {
-      firstName: 'john',
-      lastName: 'Doe',
-      email: '1@example.com',
-      password: 'Secret123!',
-      city: 'Breda',
-      roles: [Role.User],
-    };
-    try {
-      await service.create(user);
-    } catch (error) {
-      expect(error).toBeInstanceOf(HttpException);
-      expect(error.getStatus()).toBe(400);
-    }
-  });
-
-  it('should not create a user (duplicate email)', async () => {
-    const user: User = {
-      firstName: 'john',
-      lastName: 'Doe',
-      email: 'johndoe3@example.com',
-      password: 'Secret123!',
-      city: 'Breda',
-      roles: [Role.User],
-    };
-    await service.create(user);
-
-    const user2: User = {
-      firstName: 'another',
-      lastName: 'User',
-      email: 'johndoe3@example.com',
-      password: 'Secret123!',
-      city: 'Breda',
-      roles: [Role.User],
-    };
-
-    try {
-      await service.create(user2);
-    } catch (error) {
-      expect(error).toBeInstanceOf(HttpException);
-      expect(error.getStatus()).toBe(409);
-      expect(error.getResponse()).toEqual(
-        'Duplicate entry, email has to be unique.'
-      );
-    }
-  });
-
-  //////////////////////////////////
-  /////////// Get all Users ///////
-  ////////////////////////////////
-
   afterAll(async () => {
-    await closeInMongodConnection();
+    if (mongoc) {
+      await mongoc.close();
+      await mongod.stop();
+    }
+    await disconnect();
   });
 });

@@ -25,7 +25,6 @@ export class UserController {
     const result = await this.userService.create(user);
     return result;
   }
-  //get all users by firstname and lastname endpoint
 
   //get all users endpoint (no employees/admins)
   @Get()
@@ -71,7 +70,7 @@ export class UserController {
     return result;
   }
 
-  //delete use endpoint
+  //delete user endpoint
   @HasRoles(Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Delete('delete/:id')

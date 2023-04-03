@@ -65,9 +65,9 @@ export class User {
     validate: {
       validator: (value: string) => {
         // Check if the value contains only letters
-        return /^[a-zA-Z]+$/.test(value);
+        return /^[a-zA-Z\s'-]+$/.test(value);
       },
-      message: 'City should contain only letters',
+      message: 'City should contain only letters, spaces, or -',
     },
   })
   city: string;

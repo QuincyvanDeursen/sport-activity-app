@@ -3,7 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
-import { Neo4jModule, Neo4jScheme, Neo4jService } from 'nest-neo4j';
+import { Neo4jModule, Neo4jScheme } from 'nest-neo4j';
 import { MongooseModule } from '@nestjs/mongoose';
 import { environment } from '../environments/environment';
 import { SportEventModule } from '../sport-event/sport-event.module';

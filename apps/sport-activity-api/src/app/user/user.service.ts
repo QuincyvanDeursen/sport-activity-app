@@ -74,10 +74,7 @@ export class UserService {
   }
 
   //create user in neo4j
-  private async createUserInNeo4j(
-    userName: string,
-    userId: string
-  ): Promise<boolean> {
+  async createUserInNeo4j(userName: string, userId: string): Promise<boolean> {
     try {
       await this.neo4jService.write(
         `CREATE (n:User {mongoId: "${userId}", name: "${userName}"}) RETURN n`
@@ -105,10 +102,11 @@ export class UserService {
 
   //finding a user by id.
   async findUserById(id: string): Promise<any> {
-    const user = await this.userModel.findById(id).select('-password').lean();
+    const user = await this.userModel.findById(id).lean();
     if (!user) {
       throw new HttpException('User not found', 404);
     }
+    delete user.password;
     return user;
   }
 
@@ -166,7 +164,7 @@ export class UserService {
     }
   }
 
-  private async followUserInMongoDB(currentUserId, userToFollowId) {
+  async followUserInMongoDB(currentUserId, userToFollowId) {
     console.log('follow user service (api) called (mongoDB)');
     if (currentUserId === userToFollowId) {
       throw new HttpException('You cannot follow yourself', 400);
@@ -196,7 +194,7 @@ export class UserService {
   }
 
   //follow user in neo4j
-  private async followUserInNeo4j(
+  async followUserInNeo4j(
     currentUserId: string,
     userToFollowId: string
   ): Promise<boolean> {
@@ -250,7 +248,7 @@ export class UserService {
     }
   }
 
-  private async unfollowUserInMongoDB(
+  async unfollowUserInMongoDB(
     currentUserId: string,
     userToUnfollowId: string
   ): Promise<boolean> {
@@ -284,7 +282,7 @@ export class UserService {
   }
 
   //unfollow user in neo4j
-  private async unfollowUserInNeo4j(
+  async unfollowUserInNeo4j(
     currentUserId: string,
     userToUnfollowId: string
   ): Promise<boolean> {
@@ -329,7 +327,7 @@ export class UserService {
     }
   }
 
-  private async deleteUserInMongoDB(_id: string): Promise<boolean> {
+  async deleteUserInMongoDB(_id: string): Promise<boolean> {
     console.log('deleteUser from user.service.ts (api) called (mongoDB)');
     try {
       const user = await this.userModel.findByIdAndDelete(_id).lean();
@@ -351,7 +349,7 @@ export class UserService {
     }
   }
 
-  private async deleteUserInNeo4j(_id: string): Promise<boolean> {
+  async deleteUserInNeo4j(_id: string): Promise<boolean> {
     console.log('deleteUser from user.service.ts (api) called (neo4j)');
     try {
       await this.neo4jService.write(

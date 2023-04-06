@@ -1,4 +1,5 @@
-<div *ngIf="dashboard && isEmployee">
+<div *ngIf="dashboard && isEmployee; then dashboardTemplate; else none"></div>
+<ng-template #dashboardTemplate>
   <div class="container">
     <div class="row my-1 justify-content-center">
       <div class="col-12 backgrounddarkcolumn">
@@ -78,12 +79,26 @@
         <h1 class="fancynumber py-3">€{{ dashboard.avgIncome }}</h1>
         <h4 class="mb-4">op per evenement.</h4>
         <h4 class="mt-2">
-          Het minste dat je ooit opgehaald hebt met een evenement was:
+          Het minste dat je potentieel opgehaald hebt met een evenement was:
         </h4>
         <h1 class="fancynumber py-3">€{{ dashboard.minIncome }}</h1>
-        <h4>Het meeste dat je ooit opgehaald hebt met een evenement was:</h4>
+        <h4>
+          Het meeste dat je potentieel opgehaald hebt met een evenement was:
+        </h4>
         <h1 class="fancynumber py-3">€{{ dashboard.maxIncome }}</h1>
       </div>
     </div>
   </div>
-</div>
+</ng-template>
+
+<ng-template #none>
+  <div class="container">
+    <div class="row my-1 justify-content-center">
+      <div class="col-12 backgrounddarkcolumn">
+        <h1 class="text-center">
+          Log in op een werkgeversaccount om jouw dashboard te zien.
+        </h1>
+      </div>
+    </div>
+  </div>
+</ng-template>

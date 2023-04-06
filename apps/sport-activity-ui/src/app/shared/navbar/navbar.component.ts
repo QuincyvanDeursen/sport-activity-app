@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '@sport-activity-app/domain';
-import { BehaviorSubject, first, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 import { LoginService } from '../../pages/login/login.service';
 
 @Component({

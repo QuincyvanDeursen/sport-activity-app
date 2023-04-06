@@ -73,7 +73,6 @@ export class AccountSettingsComponent implements OnInit, OnDestroy {
       this.newUserData.password =
         this.loginService.userIdentityStored?.password || '';
     }
-    console.log('new user data', this.newUserData);
   }
 
   private hasRoleEmployee(): void {
@@ -89,7 +88,6 @@ export class AccountSettingsComponent implements OnInit, OnDestroy {
     };
     this.loginSubscription = this.loginService.login(identity).subscribe({
       next: () => {
-        console.log('login component next');
         this.assignUserData();
       },
       error: () =>

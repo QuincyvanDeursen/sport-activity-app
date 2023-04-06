@@ -113,7 +113,7 @@ export class UserListComponent implements OnInit, OnDestroy {
       return;
     }
     this.userService.deleteUser(userId).subscribe({
-      next: (v) => {
+      next: () => {
         this.users = this.users.filter((user) => user._id !== userId);
         this.filteredUsers = this.filteredUsers.filter(
           (user) => user._id !== userId
@@ -194,7 +194,7 @@ export class UserListComponent implements OnInit, OnDestroy {
       return;
     }
     if (currentUserId === userToUnfollowId) {
-      SweetAlert.showErrorAlert('Je kan jezelf niet volgen');
+      SweetAlert.showErrorAlert('Je kan jezelf niet ontvolgen');
       return;
     }
     if (this.currentUser.followingUsers?.includes(userToUnfollowId)) {
@@ -232,7 +232,7 @@ export class UserListComponent implements OnInit, OnDestroy {
   //////////       Check current user data   ////////////////
   ///////////////////////////////////////////////////////////
 
-  private assignCurrentUser() {
+  assignCurrentUser() {
     if (this.loginService.currentUser) {
       this.currentUser = this.loginService.currentUser;
       this.currentUserHasRoleAdmin();

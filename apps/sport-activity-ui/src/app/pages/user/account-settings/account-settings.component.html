@@ -38,7 +38,7 @@
             <input
               type="text"
               name="firstName"
-              class="form-control"
+              class="form-control firstnameinput"
               [(ngModel)]="newUserData.firstName"
               #firstName="ngModel"
               required
@@ -59,7 +59,7 @@
             <input
               type="text"
               name="lastName"
-              class="form-control"
+              class="form-control lastnameinput"
               placeholder="Klaasen"
               [(ngModel)]="newUserData.lastName"
               #lastName="ngModel"
@@ -78,7 +78,7 @@
             <label for="email">Email</label>
             <input
               type="text"
-              name="email"
+              name="email emailinput"
               class="form-control"
               placeholder="johndoe@gmail.com"
               [(ngModel)]="newUserData.email"
@@ -98,7 +98,7 @@
             <label for="city">Woonplaats</label>
             <input
               type="text"
-              name="city"
+              name="city cityinput"
               class="form-control"
               placeholder="Breda"
               [(ngModel)]="newUserData.city"
@@ -117,7 +117,7 @@
 
             <input
               type="password"
-              name="password"
+              name="password passwordinput"
               class="form-control"
               [(ngModel)]="newUserData.password"
               #password="ngModel"

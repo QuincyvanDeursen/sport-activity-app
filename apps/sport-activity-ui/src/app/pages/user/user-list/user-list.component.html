@@ -53,6 +53,7 @@
                     <a
                       (click)="followUser(user._id)"
                       class="btn customfriendbutton"
+                      id="follow-button-{{ i }}"
                       >Volgen</a
                     >
                   </td>
@@ -62,6 +63,7 @@
                     <a
                       (click)="unfollowUser(user._id)"
                       class="btn customcancelbutton"
+                      id="unfollow-button-{{ i }}"
                       >Ontvolgen</a
                     >
                   </td>
@@ -71,6 +73,7 @@
                   <a
                     (click)="sweetAlertDeleteConfirmation(user._id)"
                     class="btn customdeletebutton"
+                    id="delete-button-{{ i }}"
                   >
                     Verwijderen
                   </a>

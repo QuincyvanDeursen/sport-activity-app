@@ -6,6 +6,6 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class IncludesPipe<T> implements PipeTransform {
   transform(array: T[], item: T): boolean {
-    return array.includes(item);
+    return array ? array.includes(item) : false;
   }
 }

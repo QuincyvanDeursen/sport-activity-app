@@ -5,6 +5,7 @@ import { LoginService } from '../../login/login.service';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { SportEventService } from '../sport-event.service';
 import { SweetAlert } from '../../../shared/HelperMethods/SweetAlert';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'sport-activity-app-sport-event-create',
@@ -17,7 +18,8 @@ export class SportEventCreateComponent implements OnInit, OnDestroy {
   isEmployee = false;
   constructor(
     private loginService: LoginService,
-    private sportEventService: SportEventService
+    private sportEventService: SportEventService,
+    private router: Router
   ) {}
 
   //input change listeners
@@ -118,6 +120,7 @@ export class SportEventCreateComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           SweetAlert.showSuccessAlert('Evenement aangemaakt!');
+          this.router.navigate(['sportevents']);
         },
         error: (e) => SweetAlert.showErrorAlert(e.error.message),
         complete: () => console.log('delete sportevent complete (ui)'),

@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { Role, User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
 import { SweetAlert } from '../../../shared/HelperMethods/SweetAlert';
@@ -46,7 +45,7 @@ export class EmployeeStatisticsComponent implements OnInit {
 
   ngOnInit(): void {
     this.assignCurrentUser();
-    if (this.currentUser?._id) {
+    if (this.currentUser?._id && this.isEmployee) {
       this.getEmployeeStatsById(this.currentUser._id);
     }
   }

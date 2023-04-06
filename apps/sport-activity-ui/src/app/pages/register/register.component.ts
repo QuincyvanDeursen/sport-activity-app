@@ -68,15 +68,11 @@ export class RegisterComponent implements OnInit, OnDestroy {
     }
     this.subscription = this.registerService.register(this.newUser).subscribe({
       next: (v) => {
-        console.log('register component next');
-        console.log(v);
         this.router.navigate(['login']);
         SweetAlert.showSuccessAlert('Account succesvol aangemaakt!');
       },
-      error: () =>
-        SweetAlert.showErrorAlert(
-          'Email is al in gebruik, probeer een andere email.'
-        ),
+      error: (e) => SweetAlert.showErrorAlert(e.error.message),
+
       complete: () => console.log('register complete'),
     });
   }

@@ -58,7 +58,7 @@ export class SportEventService {
     }
   }
 
-  private async createEventInMongoDB(
+  async createEventInMongoDB(
     sportEvent: SportEvent
   ): Promise<{ mongoId: string; title: string }> {
     console.log('create sportevent service (api) called (MongoDB)');
@@ -76,16 +76,13 @@ export class SportEventService {
     }
   }
 
-  private async createEventInNeo4j(
-    mongoId: string,
-    title: string
-  ): Promise<object> {
+  async createEventInNeo4j(mongoId: string, title: string): Promise<boolean> {
     console.log('create sportevent service (api) called (Neo4j)');
     try {
-      const createdSportEventInNeo4j = await this.Neo4jService.write(
+      await this.Neo4jService.write(
         `CREATE (n:SportEvent {mongoId: "${mongoId}", Name: "${title}"})`
       );
-      return createdSportEventInNeo4j;
+      return true;
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
@@ -132,7 +129,7 @@ export class SportEventService {
     }
   }
 
-  private async deleteEventInMongoDB(_id: string): Promise<boolean> {
+  async deleteEventInMongoDB(_id: string): Promise<boolean> {
     console.log('delete sportevent service (api) called (MongoDB)');
     try {
       const sportEvent = await this.sportEventModel.findById(_id);
@@ -151,7 +148,7 @@ export class SportEventService {
     }
   }
 
-  private async deleteEventInNeo4j(mongoId: string): Promise<boolean> {
+  async deleteEventInNeo4j(mongoId: string): Promise<boolean> {
     console.log('delete sportevent service (api) called (Neo4j)');
     try {
       await this.Neo4jService.write(
@@ -216,7 +213,7 @@ export class SportEventService {
     }
   }
 
-  private async enrollUserToSportEventInMongoDB(
+  async enrollUserToSportEventInMongoDB(
     sportEventId: string,
     userId: string
   ): Promise<boolean> {
@@ -257,7 +254,7 @@ export class SportEventService {
     }
   }
 
-  private async enrollUserToSportEventInNeo4j(
+  async enrollUserToSportEventInNeo4j(
     sportEventId: string,
     userId: string
   ): Promise<boolean> {
@@ -301,7 +298,7 @@ export class SportEventService {
     }
   }
 
-  private async unenrollUserFromSportEventInMongoDB(
+  async unenrollUserFromSportEventInMongoDB(
     sportEventId: string,
     userId: string
   ): Promise<boolean> {
@@ -331,7 +328,7 @@ export class SportEventService {
     }
   }
 
-  private async unenrollUserFromSportEventInNeo4j(
+  async unenrollUserFromSportEventInNeo4j(
     sportEventId: string,
     userId: string
   ): Promise<boolean> {
@@ -383,10 +380,7 @@ export class SportEventService {
 
       //get recommended sport events from Neo4j
       const recommendedSportEvents = await this.Neo4jService.read(
-        `MATCH (me:User)-[:FOLLOWS]->(following:User)-[:PARTICIPATES]->(event:SportEvent)
-        WHERE me.mongoId = '${userId}'
-        RETURN event
-        LIMIT 10`
+        `MATCH (me:User)-[:FOLLOWS]->(following:User)-[:PARTICIPATES]->(event:SportEvent) WHERE me.mongoId = '${userId}' RETURN event LIMIT 10`
       );
 
       const mongoIds = [];

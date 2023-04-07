@@ -11,6 +11,7 @@ import { ApiResponseInterceptor } from './app/interceptors/api-response.intercep
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.enableCors();
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
   app.useGlobalInterceptors(new ApiResponseInterceptor());

@@ -5,6 +5,7 @@
   "scripts": {
     "start": "nx serve",
     "build": "nx build",
+    "build_backend": "nx build sport-activity-api",
     "test": "nx test"
   },
   "private": true,

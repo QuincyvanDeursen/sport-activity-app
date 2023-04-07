@@ -15,7 +15,6 @@ import { HasRoles } from '../app/auth/AuthTsFiles/roles.decorator';
 import { RolesGuard } from '../app/auth/AuthTsFiles/roles.guard';
 
 import { SportEventService } from './sport-event.service';
-import { get } from 'http';
 
 @Controller('sportevent')
 export class SportEventController {
@@ -24,7 +23,7 @@ export class SportEventController {
   // create sport event endpoint
   //   @HasRoles(Role.Employee)
   //   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Post('/create')
+  @Post('create')
   async register(@Body() sportEvent: SportEvent): Promise<object> {
     const result = await this.sportEventService.create(sportEvent);
     return result;
@@ -38,13 +37,13 @@ export class SportEventController {
     return result;
   }
 
-  @Get('/hosted/:userId')
+  @Get('hosted/:userId')
   async getHostedSportEvents(@Param('userId') userId: string): Promise<object> {
     const result = await this.sportEventService.getHostedSportEvents(userId);
     return result;
   }
 
-  @Get('/recommended/:userId')
+  @Get('recommended/:userId')
   async getRecommendedSportEvents(
     @Param('userId') userId: string
   ): Promise<object> {
@@ -54,7 +53,7 @@ export class SportEventController {
     return result;
   }
 
-  @Get('/:id')
+  @Get(':id')
   async getSportEventById(@Request() req): Promise<SportEvent> {
     const result = await this.sportEventService.findSportEventById(
       req.params.id
@@ -71,7 +70,7 @@ export class SportEventController {
   // delete sport event by id endpoint
   @HasRoles(Role.Employee, Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Delete('/:id')
+  @Delete(':id')
   async deleteSportEventById(@Request() req): Promise<object> {
     const result = await this.sportEventService.deleteSportEventById(
       req.params.id
@@ -88,7 +87,7 @@ export class SportEventController {
     return result;
   }
 
-  @Post('/enroll')
+  @Post('enroll')
   async joinSportEvent(
     @Body() enrollRequest: { currentUserId: string; sportEventId: string }
   ): Promise<object> {
@@ -99,7 +98,7 @@ export class SportEventController {
     return result;
   }
 
-  @Post('/unenroll')
+  @Post('unenroll')
   async leaveSportEvent(
     @Body() enrollRequest: { currentUserId: string; sportEventId: string }
   ): Promise<object> {

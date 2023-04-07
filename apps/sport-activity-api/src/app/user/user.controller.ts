@@ -20,14 +20,14 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   // get user by id endpoint
-  @Get('/:id')
+  @Get(':id')
   async getUserById(@Request() req): Promise<User> {
     const result = await this.userService.findUserById(req.params.id);
     return result;
   }
 
   //register endpoint
-  @Post('/register')
+  @Post('register')
   async register(@Body() user: User): Promise<object> {
     const result = await this.userService.create(user);
     return result;
@@ -44,7 +44,7 @@ export class UserController {
   //follow user endpoint
   @HasRoles(Role.User, Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Post('/follow')
+  @Post('follow')
   async followUser(
     @Body() followRequest: { currentUserId: string; userToFollowId: string }
   ): Promise<object> {
@@ -58,7 +58,7 @@ export class UserController {
   //unfollow user endpoint
   @HasRoles(Role.User, Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Post('/unfollow')
+  @Post('unfollow')
   async unfollowUser(
     @Body() followRequest: { currentUserId: string; userToUnfollowId: string }
   ): Promise<object> {
@@ -73,7 +73,7 @@ export class UserController {
   //delete user endpoint
   @HasRoles(Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Delete('/delete/:id')
+  @Delete('delete/:id')
   async deleteUser(@Request() deleteUser): Promise<object> {
     console.log(deleteUser.params.id);
     console.log(
@@ -97,7 +97,7 @@ export class UserController {
   //update account settings endpoint
   @HasRoles(Role.Employee, Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
-  @Get('/statistics/:id')
+  @Get('statistics/:id')
   async getEmployeeStatistics(@Request() req): Promise<object> {
     console.log('get employee statistics called from user.controller.ts (api)');
     const result = await this.userService.getEmployeeStatistics(req.params.id);

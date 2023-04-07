@@ -6,6 +6,7 @@
     "start": "nx serve",
     "build": "nx build",
     "build_backend": "nx build sport-activity-api --prod",
+    "build_frontend": "nx build sport-activity-ui --prod",
     "test": "nx test"
   },
   "private": true,

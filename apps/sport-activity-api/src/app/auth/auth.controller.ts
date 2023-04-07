@@ -7,7 +7,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @UseGuards(AuthGuard('local'))
-  @Post('login')
+  @Post('/login')
   async login(@Request() req): Promise<object> {
     console.log('auth controller: Login called');
     return this.authService.login(req.user);

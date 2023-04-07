@@ -19,12 +19,12 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  //get user by id endpoint
-  // @Get(':id')
-  // async getUserById(@Request() req): Promise<User> {
-  //   const result = await this.userService.findUserById(req.params.id);
-  //   return result;
-  // }
+  // get user by id endpoint
+  @Get(':id')
+  async getUserById(@Request() req): Promise<User> {
+    const result = await this.userService.findUserById(req.params.id);
+    return result;
+  }
 
   //register endpoint
   @Post('register')

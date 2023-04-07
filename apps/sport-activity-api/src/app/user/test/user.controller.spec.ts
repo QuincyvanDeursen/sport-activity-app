@@ -93,28 +93,28 @@ describe('UserController', () => {
       expect(result).toEqual(mockUsers);
     });
 
-    // it('should return a user object by ID', async () => {
-    //   // create a mock user object
-    //   const mockUser = {
-    //     _id: 'some-id',
-    //     email: 'test@example.com',
-    //     password: 'password',
-    //     firstName: 'John',
-    //     lastName: 'Doe',
-    //     city: 'New York',
-    //     roles: [Role.User],
-    //   };
+    it('should return a user object by ID', async () => {
+      // create a mock user object
+      const mockUser = {
+        _id: 'some-id',
+        email: 'test@example.com',
+        password: 'password',
+        firstName: 'John',
+        lastName: 'Doe',
+        city: 'New York',
+        roles: [Role.User],
+      };
 
-    //   userService.findUserById = jest.fn().mockResolvedValue(mockUser);
+      userService.findUserById = jest.fn().mockResolvedValue(mockUser);
 
-    //   const response = await userController.getUserById({
-    //     params: { id: 'some-id' },
-    //   });
+      const response = await userController.getUserById({
+        params: { id: 'some-id' },
+      });
 
-    //   expect(response).toEqual(mockUser);
+      expect(response).toEqual(mockUser);
 
-    //   expect(userService.findUserById).toHaveBeenCalledWith('some-id');
-    // });
+      expect(userService.findUserById).toHaveBeenCalledWith('some-id');
+    });
   });
 
   describe('followUser', () => {

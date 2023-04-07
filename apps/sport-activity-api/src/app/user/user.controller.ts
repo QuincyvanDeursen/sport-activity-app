@@ -19,6 +19,13 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  //get user by id endpoint
+  @Get(':id')
+  async getUserById(@Request() req): Promise<User> {
+    const result = await this.userService.findUserById(req.params.id);
+    return result;
+  }
+
   //register endpoint
   @Post('register')
   async register(@Body() user: User): Promise<object> {
@@ -31,13 +38,6 @@ export class UserController {
   async getAllUsers(): Promise<User[]> {
     console.log('get all users controller');
     const result = await this.userService.getAllUsers();
-    return result;
-  }
-
-  //get user by id endpoint
-  @Get(':id')
-  async getUserById(@Request() req): Promise<User> {
-    const result = await this.userService.findUserById(req.params.id);
     return result;
   }
 

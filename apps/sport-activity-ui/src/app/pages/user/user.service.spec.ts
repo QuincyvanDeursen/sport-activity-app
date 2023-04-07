@@ -5,7 +5,7 @@ import {
 import { TestBed } from '@angular/core/testing';
 
 import { UserService } from './user.service';
-import { environment } from 'apps/sport-activity-ui/src/environments/environment';
+import { environment } from '../../../environments/environment';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptorService } from '../../interceptors/token-interceptor.service';
 import { Role } from '@sport-activity-app/domain';

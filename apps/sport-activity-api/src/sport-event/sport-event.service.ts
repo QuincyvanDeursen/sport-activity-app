@@ -257,7 +257,7 @@ export class SportEventService {
     sportEventId: string,
     userId: string
   ): Promise<boolean> {
-    console.log('enrollUserToSportEvent (api)  called (Neo4j)');
+    console.log('enrollUserToSportEvent (api)   called (Neo4j)');
     try {
       await this.Neo4jService.write(
         `MATCH (n:User {mongoId: "${userId}"}) MATCH (m:SportEvent {mongoId: "${sportEventId}"}) CREATE (n)-[r:PARTICIPATES]->(m)`

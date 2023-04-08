@@ -21,7 +21,6 @@ export class SportEventService {
     console.log('get all sportevents service (api) called');
     try {
       const result: SportEvent[] = await this.sportEventModel.find();
-      console.log(result);
       return result;
     } catch (error) {
       throw new HttpException(error.message, 400);
@@ -260,7 +259,7 @@ export class SportEventService {
   ): Promise<boolean> {
     console.log('enrollUserToSportEvent (api) called (Neo4j)');
     try {
-      this.Neo4jService.write(
+      await this.Neo4jService.write(
         `MATCH (n:User {mongoId: "${userId}"}) MATCH (m:SportEvent {mongoId: "${sportEventId}"}) CREATE (n)-[r:PARTICIPATES]->(m)`
       );
       return true;
@@ -334,7 +333,7 @@ export class SportEventService {
   ): Promise<boolean> {
     console.log('unenrollUserToSportEvent (api) called (Neo4j)');
     try {
-      this.Neo4jService.write(
+      await this.Neo4jService.write(
         `MATCH (n:User {mongoId: "${userId}"}) MATCH (m:SportEvent {mongoId: "${sportEventId}"})
         MATCH (n)-[r:PARTICIPATES]->(m)
          DELETE r`

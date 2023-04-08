@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { first, of, throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { AccountSettingsComponent } from './account-settings.component';
 import { UserService } from '../user.service';
 import { SweetAlert } from '../../../shared/HelperMethods/SweetAlert';

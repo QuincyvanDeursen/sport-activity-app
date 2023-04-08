@@ -1,0 +1,235 @@
+<div class="container">
+  <div class="row backgrounddark">
+    <div class="col-12">
+      <h1 class="text-center ptp-3">Casus beschrijving</h1>
+    </div>
+    <div class="col-12">
+      <p class="p-5">
+        De casus gaat over een sport gerelateerd evenementen systeem. Lokale
+        sportscholen, lees eenmanszaak, hebben vaak moeite om te concureren
+        tegen de grote namen zoals SportCity en BasicFit. Deze eenmans
+        sportscholen kunnen vaak wat extra marketing gebruiken om hun bedrijf
+        bovenwater te houden. De sportschool waar ik persoonlijk sport is zo'n
+        eenmanszaak. Mijn sportschool heeft toch vaak interessante evenementen
+        aan te bieden zoals opendagen, proeflessen, workshops en wedstrijden. Om
+        ervoor te zorgen dat deze evenementen publieker worden is deze website
+        ontwikkeld. Via deze website kunnen de eenmans sportscholen hun
+        evenementen aanbieden aan de mensen die niet al lid zijn bij de
+        sportschool. Gebruikers kunnen zo makkelijk evenementen vinden die bij
+        hun passen en/of in de buurt liggen. De website is ontwikkeld met behulp
+        van Angular en NestJS, mongoDB en Neo4j. De frontend is gehost op
+        netlify en de backend op railway.
+      </p>
+    </div>
+  </div>
+  <div class="row backgrounddark">
+    <div class="col-12 d-flex justify-content-center">
+      <h2 class="pt-3">ERD</h2>
+    </div>
+    <div class="col-12 d-flex justify-content-center">
+      <img
+        style="height: auto; width: 60%"
+        src="../../../assets/Images/ERD.png"
+        alt="ERD"
+      />
+    </div>
+    <div class="col-12 d-flex justify-content-center">
+      <p class="p-5">
+        Bovenstaand ERD geeft weer hoe de database opgebouwd zou zijn als het
+        een relationeel database zou zijn. De database is echter een NoSQL
+        database en is opgebouwd met behulp van een document (mongoDB) database.
+        Mogelijk zijn sommige relaties dan ook anders opgebouwd dan in het ERD.
+        De datatypes die weergeven worden zijn datatypes van typescript en dus
+        niet (SQL datatypes), aangezien dat in deze casus logischer is om te
+        tonen. De volgende sectie toont hoe de database is opgebouwd in
+        mongoose.
+      </p>
+    </div>
+  </div>
+  <div class="row backgrounddark">
+    <div class="col-12 d-flex justify-content-center">
+      <h2 class="pt-3">MongoDB Ontwerp</h2>
+    </div>
+    <div class="col-12 d-flex justify-content-center">
+      <img
+        style="height: auto; width: 60%"
+        src="../../../assets/Images/SchemaDesign.png"
+        alt="ERD"
+      />
+    </div>
+    <div class="col-12 d-flex justify-content-center">
+      <p class="p-5">
+        Bovenstaand schema geeft weer hoe de database is opgebouwd via mongoose.
+        Zoals te zien zijn er twee collections. Een users collection en een
+        SportEvent collection. De users collection bevat alle gebruikers van de
+        applicatie. De SportEvent collection bevat alle sportevenementen. De
+        applicatie heeft twee hoofdtype gebruikers, namelijk de employee en de
+        regular user. Er is een admin met extra rechten, deze kan gezien worden
+        als Regular User met privileges. Het verschil tussen een employee en een
+        regular user is dat een employee een sportevenement kan aanmaken en een
+        regular user niet. Een regular user kan daarnaast andere users volgens
+        en een employee kan dat niet. De sportschool zit geëmbed in de employee.
+        Dit is omdat een employee maar bij één sportschool kan werken. De reden
+        dat daarvoor gekozen is omdat dat bepaalde functionaliteiten van de
+        applicaties optimaliseert. De sportschool van de employee is ook geëmbed
+        in de sportevenementen. Dit is omdat een sportevenement altijd bij een
+        sportschool hoort en samen nodig is in get requesten. Meer over de
+        ontwerp keuzes zijn terug te vinden in het apart ingeleverde excel
+        bestand.
+      </p>
+    </div>
+  </div>
+  <div class="row backgrounddark">
+    <div class="col-12 d-flex justify-content-center">
+      <h2 class="pt-3">Neo4J Ontwerp</h2>
+    </div>
+    <div class="col-12 d-flex justify-content-center">
+      <p class="p-5">
+        Neo4j wordt in deze applicatie enkel gebruikt om relaties tussen users
+        en evenementen te visualiseren en optimaliseren. Neo4j maakt het
+        mogelijk om sportevenemten aan te bevelen aan gebruikers. Om dat te
+        realiseren is enkel het “_id” field van mongoDB benodigd. De User node
+        heeft dus enkel het “_id” en de “firstName” van de betreffende User. Een
+        sportEvent enkel de “_id” nodig en de “title” van het sportevenement.
+        Zowel “firstName” en “title” zijn toegevoegd om het debuggen makkelijk
+        te maken, aangezien de mongoDB id’s niet prettig leesbaar zijn. De
+        relaties “follows” en “participates” hebben geen extra eigenschappen.
+      </p>
+    </div>
+  </div>
+  <div class="row backgrounddark">
+    <div class="col-12 d-flex justify-content-center">
+      <h2 class="pt-3">Userstories</h2>
+    </div>
+    <div class="col-12">
+      <h5 class="text-center pt-3">Regular Users</h5>
+    </div>
+    <div class="col-12">
+      <ul class="p-5">
+        <li>
+          Als gebruiker wil ik mezelf kunnen registeren zodat ik de website
+          volledig kan gebruiken.
+        </li>
+        <li>
+          Als gebruiker wil ik kunnen inloggen zodat ik toegang heb tot mijn
+          gegevens.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil ik een overzicht zien van andere
+          gebruikers zodat ik kan zien wie de website nog meer gebruiken.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil ik een andere gebruiker kunnen volgen
+          zodat ik evenementen aanbevolen krijgen op basis van de gevolgde
+          gebruikers.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil ik een andere gebruikers kunnen ontvolgen
+          zodat ik geen evenementen meer aanbevolen krijg van deze gebruikers.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil ik een overzicht zien van sportevenementen
+          zodat ik kan kiezen waar ik aan mee zou willen doen.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil ik de details van een sportevenement
+          kunnen inzien zodat ik meer te weten kom over het evenement.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil ik mezelf kunnen aanmelden voor een
+          sportevenement, zodat er een plek voor mij gereserveerd staat.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil ik mezelf kunnen afmelden van een
+          sportevenement, zodat mijn reservering komt te vervallen.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil ik een overzicht zien van aanbevolen
+          sportevenementen op basis van de mensen die ik volg, zodat ik met hen
+          mee kan doen.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil ik kunnen zoeken naar sportevenementen op
+          basis van stad en naam zodat ik doelgericht een evenement kan vinden.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil ik een overzicht zien van de evenementen
+          waarvoor ik aangemeld ben, zodat ik deze gemakkelijk kan tonen als
+          reserveringsbewijs.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil mijn account details kunnen aanpassen
+          zodat ik mijn account up-to-date kan houden.
+        </li>
+      </ul>
+    </div>
+    <div class="col-12">
+      <h5 class="text-center pt-3">Employees</h5>
+    </div>
+    <div class="col-12">
+      <ul class="p-5">
+        <li>
+          Als werkgever wil ik mezelf en mijn sportschool kunnen registeren
+          zodat ik de website volledig kan gebruiken.
+        </li>
+        <li>
+          Als werkgever wil ik kunnen inloggen zodat ik toegang heb tot mijn
+          gegevens.
+        </li>
+        <li>
+          Als ingelogde werkgever wil ik evenement kunnen aanbieden waarbij
+          automatisch de sportschool wordt gebruikt waarvoor ik werk, zodat ik
+          leden kan werven.
+        </li>
+        <li>
+          Als ingelogde werkgever wil ik een evenement kunnen aanpassen voor als
+          ik per ongeluk de verkeerde data heb ingevoerd.
+        </li>
+        <li>
+          Als ingelogde werkgever wil ik een evenement kunnen verwijderen voor
+          als deze gecanceld is.
+        </li>
+        <li>
+          Als ingelogde werkgever wil ik mijn accountgegevens kunnen aanpassen
+          om deze up-to-date te houden.
+        </li>
+        <li>
+          Als ingelogde werkgever wil ik mijn sportschool gegevens kunnen
+          aanpassen om deze up-to-date te houden.
+        </li>
+        <li>
+          Als ingelogde werkgever wil ik een overzicht zien van de door mij
+          aangeboden evenementen, zodat ik daar snel naar toe kan navigeren.
+        </li>
+        <li>
+          Als ingelogde gebruiker wil ik een overzicht hebben van alle
+          statistieken van mijn sportevenementen, zodat ik inzichten verkrijg
+          over de successen en mislukkingen.
+        </li>
+      </ul>
+    </div>
+    <div class="col-12">
+      <h5 class="text-center pt-3">Admins</h5>
+    </div>
+    <div class="col-12">
+      <ul class="p-5">
+        <li>
+          Als admin wil ik kunnen inloggen met een al bestaand account, zodat ik
+          bewerkingen kan doen.
+        </li>
+        <li>
+          Als ingelogde admin wil ik gebruikers kunnen verwijderen, zodat de
+          website geen spam of scam leden bevat.
+        </li>
+        <li>
+          Als ingelogde admin wil ik evenementen kunnen verwijderen, zodat de
+          website geen spam of scam evenementen bevat.
+        </li>
+        <li>
+          Als ingelogde admin wil ik volledige toegang hebben tot alle endpoints
+          in de back-end, zodat ik acties kan uitvoeren namens andere users.
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

@@ -21,8 +21,8 @@ export class SportEventController {
   constructor(private readonly sportEventService: SportEventService) {}
 
   // create sport event endpoint
-  //   @HasRoles(Role.Employee)
-  //   @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @HasRoles(Role.Employee, Role.Admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post('create')
   async register(@Body() sportEvent: SportEvent): Promise<object> {
     const result = await this.sportEventService.create(sportEvent);
@@ -37,6 +37,8 @@ export class SportEventController {
     return result;
   }
 
+  @HasRoles(Role.Employee, Role.Admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get('hosted/:userId')
   async getHostedSportEvents(@Param('userId') userId: string): Promise<object> {
     const result = await this.sportEventService.getHostedSportEvents(userId);
@@ -79,7 +81,7 @@ export class SportEventController {
   }
 
   // update sport event by id endpoint
-  @HasRoles(Role.Employee)
+  @HasRoles(Role.Employee, Role.Admin)
   @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Put()
   async updateSportEventById(@Body() sportEvent: SportEvent): Promise<object> {
@@ -87,6 +89,8 @@ export class SportEventController {
     return result;
   }
 
+  @HasRoles(Role.User, Role.Admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post('enroll')
   async joinSportEvent(
     @Body() enrollRequest: { currentUserId: string; sportEventId: string }
@@ -98,6 +102,8 @@ export class SportEventController {
     return result;
   }
 
+  @HasRoles(Role.User, Role.Admin)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Post('unenroll')
   async leaveSportEvent(
     @Body() enrollRequest: { currentUserId: string; sportEventId: string }

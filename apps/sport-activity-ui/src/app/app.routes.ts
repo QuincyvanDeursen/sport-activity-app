@@ -10,6 +10,7 @@ import { EmployeeStatisticsComponent } from './pages/user/employee-statistics/em
 import { UserListComponent } from './pages/user/user-list/user-list.component';
 
 import { IntroductionComponent } from './shared/introduction/introduction.component';
+import { AboutComponent } from './pages/about/about.component';
 
 export const appRoutes: Route[] = [
   //about
@@ -22,6 +23,7 @@ export const appRoutes: Route[] = [
   { path: 'login', pathMatch: 'full', component: LoginComponent },
   { path: 'register', pathMatch: 'full', component: RegisterComponent },
   { path: 'users', pathMatch: 'full', component: UserListComponent },
+  { path: 'about', pathMatch: 'full', component: AboutComponent },
   {
     path: 'users/statistics',
     pathMatch: 'full',

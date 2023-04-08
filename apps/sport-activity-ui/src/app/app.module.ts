@@ -21,6 +21,7 @@ import { SportEventColumnsComponent } from './pages/sport-event/sport-event-colu
 import { SportEventCreateComponent } from './pages/sport-event/sport-event-create/sport-event-create.component';
 import { SportEventUpdateComponent } from './pages/sport-event/sport-event-update/sport-event-update.component';
 import { EmployeeStatisticsComponent } from './pages/user/employee-statistics/employee-statistics.component';
+import { AboutComponent } from './pages/about/about.component';
 
 @NgModule({
   declarations: [
@@ -39,6 +40,7 @@ import { EmployeeStatisticsComponent } from './pages/user/employee-statistics/em
     SportEventCreateComponent,
     SportEventUpdateComponent,
     EmployeeStatisticsComponent,
+    AboutComponent,
   ],
   imports: [
     BrowserModule,

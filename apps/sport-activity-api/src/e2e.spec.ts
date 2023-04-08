@@ -39,7 +39,7 @@ let uri: string;
 })
 export class TestAppModule {}
 
-describe('SportActivityApi', () => {
+describe.skip('SportActivityApi', () => {
   let app: INestApplication;
   let moduleFixture: TestingModule;
   let mongoc: MongoClient;

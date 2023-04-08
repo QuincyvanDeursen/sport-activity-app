@@ -9,6 +9,7 @@ import { environment } from '../../../environments/environment';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptorService } from '../../interceptors/token-interceptor.service';
 import { Role } from '@sport-activity-app/domain';
+import { FormsModule } from '@angular/forms';
 
 describe('UserService', () => {
   let service: UserService;
@@ -16,7 +17,7 @@ describe('UserService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
+      imports: [HttpClientTestingModule, FormsModule],
       providers: [
         UserService,
         {

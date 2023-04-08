@@ -117,6 +117,7 @@ export class UserService {
       .find({ roles: { $in: ['user'] } })
       .select('-password')
       .lean();
+
     if (!result || result.length === 0) {
       throw new HttpException('No usersfound', 404);
     }

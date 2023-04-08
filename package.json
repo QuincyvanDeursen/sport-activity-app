@@ -7,7 +7,9 @@
     "build": "nx build",
     "build_backend": "nx build sport-activity-api --prod",
     "build_frontend": "nx build sport-activity-ui --prod",
-    "test": "nx test"
+    "test": "nx test",
+    "test-ui": "nx test sport-activity-ui",
+    "test-api": "nx test sport-activity-api"
   },
   "private": true,
   "devDependencies": {

@@ -11,6 +11,9 @@ import { UserListComponent } from './pages/user/user-list/user-list.component';
 
 import { IntroductionComponent } from './shared/introduction/introduction.component';
 import { AboutComponent } from './pages/about/about.component';
+import { EmployeeListComponent } from './pages/employee/employee-list/employee-list.component';
+import { EmployeeDetailComponent } from './pages/employee/employee-detail/employee-detail.component';
+import { EmployeeColumnsComponent } from './pages/employee/employee-columns/employee-columns.component';
 
 export const appRoutes: Route[] = [
   //about
@@ -45,6 +48,13 @@ export const appRoutes: Route[] = [
     component: SportEventColumnsComponent,
     children: [
       { path: ':id', pathMatch: 'full', component: SportEventDetailComponent },
+    ],
+  },
+  {
+    path: 'employees',
+    component: EmployeeColumnsComponent,
+    children: [
+      { path: ':id', pathMatch: 'full', component: EmployeeDetailComponent },
     ],
   },
   {

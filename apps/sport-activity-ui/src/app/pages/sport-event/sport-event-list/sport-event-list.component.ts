@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
 import { Role, SportEvent, User } from '@sport-activity-app/domain';
 import { Subscription } from 'rxjs';
 import Swal from 'sweetalert2';
 import { SweetAlert } from '../../../shared/HelperMethods/SweetAlert';
 import { LoginService } from '../../login/login.service';
 import { SportEventService } from '../sport-event.service';
+import { CommonService } from '../../../shared/HelperMethods/common.service';
 
 @Component({
   selector: 'sport-activity-app-sport-event-list',
@@ -29,6 +29,7 @@ export class SportEventListComponent implements OnInit, OnDestroy {
   getRecommendedSportEventsSubscription?: Subscription;
   getEnrolledSportEventsSubscription?: Subscription;
   getHostedSportEventsSubscription?: Subscription;
+  commonServiceSubscription?: Subscription;
 
   //current user data
   currentUser!: User;
@@ -38,12 +39,19 @@ export class SportEventListComponent implements OnInit, OnDestroy {
 
   constructor(
     private loginService: LoginService,
-    private sportEventService: SportEventService
+    private sportEventService: SportEventService,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
     this.assignCurrentUser();
     this.getSportEvents();
+    this.commonServiceSubscription = this.commonService
+      .getUpdateSubject()
+      .subscribe((updatedData) => {
+        // update the sportEvent array with the new data
+        this.sportEvents = updatedData as SportEvent[];
+      });
   }
 
   ngOnDestroy(): void {
@@ -52,6 +60,7 @@ export class SportEventListComponent implements OnInit, OnDestroy {
     this.getRecommendedSportEventsSubscription?.unsubscribe();
     this.getEnrolledSportEventsSubscription?.unsubscribe();
     this.getHostedSportEventsSubscription?.unsubscribe();
+    this.commonServiceSubscription?.unsubscribe();
   }
 
   ///////////////////////////////////////////////////////////

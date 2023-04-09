@@ -1,0 +1,80 @@
+<div class="container">
+  <div class="row backgrounddark">
+    <div class="col-12 text-center pt-2">
+      <h2 class="titlebackground">
+        {{ employee.sportclub!.clubName }}
+      </h2>
+    </div>
+    <div class="row justify-content-center">
+      <hr class="rounded w-75 mx-auto" />
+      <div class="col-12 col-md-5 d-flex justify-content-center py-3">
+        <div class="d-flex flex-column generalbackground p-4">
+          <div><h4 class="d-block text-center">Informatie</h4></div>
+          <h6>
+            Website:
+            <a href="{{ employee.sportclub?.websiteURL }}" target="_blank">{{
+              employee.sportclub?.websiteURL
+            }}</a>
+          </h6>
+        </div>
+      </div>
+      <div class="col-12 col-md-5 d-flex justify-content-center py-3">
+        <div class="d-flex flex-column generalbackground p-4">
+          <div><h4 class="d-block text-center">Locatie</h4></div>
+          <h6 class="d-block">Stad: {{ employee.sportclub?.address?.city }}</h6>
+          <h6 class="d-block">
+            Straat en huisnummer: {{ employee.sportclub?.address?.street }}
+            {{ employee.sportclub?.address?.houseNumber }}
+          </h6>
+          <h6 class="d-block">
+            Postcode: {{ employee.sportclub?.address?.zipCode }}
+          </h6>
+        </div>
+      </div>
+    </div>
+    <div class="row my-3">
+      <div class="col-12 text-center">
+        <small>Contact </small>
+        <small> | </small>
+        <small>{{ employee.sportclub?.email }}</small>
+        <small> | </small>
+        <small> Telefoonnummer: {{ employee.sportclub?.phoneNumber }}</small>
+      </div>
+    </div>
+    <hr class="rounded w-75 mx-auto" />
+    <div
+      class="overflow-auto"
+      *ngIf="sportEvents.length > 0"
+      style="max-height: 200px"
+    >
+      <div>
+        <h4 class="d-block text-center titlebackground">Evenementen Aanbod</h4>
+      </div>
+      <hr class="rounded w-50 mx-auto" />
+      <div *ngFor="let event of sportEvents">
+        <div class="d-flex flex-column generalbackground">
+          <h6 class="text-center pt-3">{{ event.title }}</h6>
+          <h6 class="text-center">
+            {{ event.description }}
+          </h6>
+          <hr class="rounded w-50 mx-auto" />
+        </div>
+      </div>
+      <div class="d-flex justify-content-center">
+        <a class="btn custombutton" routerLink="/sportevents"> Evenementen</a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 d-flex justify-content-center py-5">
+        <div *ngIf="isAdmin">
+          <a
+            class="btn customdeletebutton"
+            (click)="sweetAlertDeleteConfirmation()"
+          >
+            verwijderen
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

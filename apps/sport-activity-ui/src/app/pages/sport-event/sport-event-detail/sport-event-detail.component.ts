@@ -5,6 +5,8 @@ import { Subscription } from 'rxjs';
 import { SweetAlert } from '../../../shared/HelperMethods/SweetAlert';
 import { LoginService } from '../../login/login.service';
 import { SportEventService } from '../sport-event.service';
+import { CommonService } from '../../../shared/HelperMethods/common.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'sport-activity-app-sport-event-detail',
@@ -28,7 +30,8 @@ export class SportEventDetailComponent implements OnInit, OnDestroy {
     private sportEventService: SportEventService,
     private route: ActivatedRoute,
     private loginService: LoginService,
-    private router: Router
+    private router: Router,
+    private commonService: CommonService
   ) {}
 
   ngOnInit(): void {
@@ -160,11 +163,34 @@ export class SportEventDetailComponent implements OnInit, OnDestroy {
   //////////////////////////////////////////////
   //////    Delete & Update functionality  /////
   //////////////////////////////////////////////
+  //custom confirmation for deleting a user
+  sweetAlertDeleteConfirmation() {
+    console.log(
+      'sweetAlertDeleteConfirmation called from sportevent-list.component.ts'
+    );
+    Swal.fire({
+      title: 'pas op!	',
+      text: 'Weet je zeker dat je dit evenement wilt verwijderen?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Verwijderen',
+      cancelButtonText: 'Annuleren',
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.deleteSportEvent();
+      }
+    });
+  }
 
   //delete sportevent
   deleteSportEvent() {
     console.log('deleting sportevent (ui)');
-    if (this.sportEvent.hostId !== this.currentUser?._id) {
+    if (
+      this.sportEvent.hostId !== this.currentUser?._id &&
+      this.isAdmin === false
+    ) {
       SweetAlert.showErrorAlert(
         'U bent niet de host van dit sportevent, u kunt het niet verwijderen'
       );
@@ -176,6 +202,7 @@ export class SportEventDetailComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => {
           SweetAlert.showSuccessAlert('Sportevent succesvol verwijderd');
+          this.commonService.updateSportEventList();
           this.router.navigate(['/sportevents']);
         },
         error: () => SweetAlert.showErrorAlert('Er is iets fout gegaan'),

@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="row backgrounddark justify-content-center py-4">
+    <div class="col-12">
+      <h1 class="text-center titlebackground">Aanbieders</h1>
+    </div>
+    <div class="col-12">
+      <div class="input-group mt-3">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="zoek op titel.."
+          aria-label="Zoek op titel"
+          [(ngModel)]="clubName"
+        />
+        <input
+          type="text"
+          class="form-control"
+          placeholder="zoek op stad.."
+          aria-label="Zoek op stad"
+          [(ngModel)]="sportEventCity"
+        />
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="col-12">
+      <div class="table-responsive mb-2">
+        <table class="table tableborder table-dark">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Sportschool</th>
+              <th scope="col">Eigenaar</th>
+              <th scope="col">Stad</th>
+              <th scope="col"></th>
+            </tr>
+          </thead>
+          <tbody *ngIf="employees.length > 0">
+            <tr *ngFor="let employee of filteredEmployees; let i = index">
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ employee.sportclub!.clubName }}</td>
+              <td>
+                {{ employee.firstName | titlecase }}
+                {{ employee.lastName | titlecase }}
+              </td>
+              <td>{{ employee.sportclub!.address!.city | titlecase }}</td>
+              <td>
+                <a
+                  routerLink="{{ employee._id }}"
+                  class="btn customdetailbutton"
+                >
+                  Toon Details
+                </a>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="employees.length === 0">
+            <td colspan="7">
+              <h2 class="text-center">Er zijn geen aanbieders gevonden!</h2>
+            </td>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

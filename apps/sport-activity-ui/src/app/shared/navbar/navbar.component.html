@@ -38,6 +38,14 @@
             >Leden</a
           >
         </li>
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            routerLink="employees"
+            (click)="isMenuCollapsed = true"
+            >Aanbieders</a
+          >
+        </li>
       </ul>
       <ul class="navbar-nav ms-auto">
         <li *ngIf="(loggedInUser | async) === undefined" class="nav-item">

@@ -118,9 +118,16 @@ export class UserService {
       .select('-password')
       .lean();
 
-    if (!result || result.length === 0) {
-      throw new HttpException('No usersfound', 404);
-    }
+    return result;
+  }
+
+  async getAllEmployees(): Promise<User[]> {
+    console.log('get all employees service (api) called');
+    const result: User[] = await this.userModel
+      .find({ roles: { $in: ['employee'] } })
+      .select('-password')
+      .lean();
+
     return result;
   }
 

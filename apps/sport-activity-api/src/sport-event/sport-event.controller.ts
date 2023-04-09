@@ -37,8 +37,6 @@ export class SportEventController {
     return result;
   }
 
-  @HasRoles(Role.Employee, Role.Admin)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get('hosted/:userId')
   async getHostedSportEvents(@Param('userId') userId: string): Promise<object> {
     const result = await this.sportEventService.getHostedSportEvents(userId);

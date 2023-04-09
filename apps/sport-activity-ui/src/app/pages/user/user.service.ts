@@ -130,4 +130,34 @@ export class UserService {
 
     return result;
   }
+
+  //get all employees/sportclubs
+  getAllEmployees(): Observable<User[]> {
+    console.log('get all employees ui-service called');
+    console.log(httpOptions.headers);
+    const result = this.http
+      .get<User[]>(`${environment.SERVER_API_URL}user/employees`, httpOptions)
+      .pipe(
+        map((response: any) => {
+          return response.results;
+        })
+      );
+
+    return result;
+  }
+
+  //get user by id request
+  getUserById(id: string): Observable<User> {
+    console.log('get user by id ui-service called');
+    console.log(httpOptions.headers);
+    const result = this.http
+      .get<User>(`${environment.SERVER_API_URL}user/${id}`, httpOptions)
+      .pipe(
+        map((response: any) => {
+          return response.results;
+        })
+      );
+
+    return result;
+  }
 }

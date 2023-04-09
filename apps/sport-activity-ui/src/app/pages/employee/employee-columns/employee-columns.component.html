@@ -1,0 +1,31 @@
+<div *ngIf="userIsLoggedIn; then employeeList; else loginTemplate"></div>
+
+<ng-template #employeeList>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-xl-6 d-flex my-auto">
+        <sport-activity-app-employee-list></sport-activity-app-employee-list>
+      </div>
+      <div class="col-12 col-xl-6">
+        <router-outlet></router-outlet>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #loginTemplate>
+  <div class="container">
+    <div class="row backgrounddark">
+      <div class="col-12">
+        <h1 class="text-center titlebackground">
+          Log in om aanbieders weer te geven!
+        </h1>
+      </div>
+      <div class="col-12">
+        <div class="text-center">
+          <a routerLink="/login" class="btn customloginbutton">Log in</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>

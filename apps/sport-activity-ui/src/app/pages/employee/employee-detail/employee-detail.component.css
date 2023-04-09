@@ -3,33 +3,20 @@
   border-radius: 25px;
   margin-top: 10%;
   margin-bottom: 10%;
+  padding-bottom: 10px;
   margin-left: 10px;
   margin-right: 10px;
 }
 
-.customloginbutton {
+.custombutton {
   background-color: #000000;
   color: white;
   border-radius: 10px;
   border: 1px solid #1044f2;
 }
 
-.customloginbutton:hover {
+.custombutton:hover {
   background-color: #1044f2;
-  color: white;
-  border-radius: 10px;
-  border: 1px solid #000000;
-}
-
-.customcancelbutton {
-  background-color: #000000;
-  color: white;
-  border-radius: 10px;
-  border: 1px solid #edde00;
-}
-
-.customcancelbutton:hover {
-  background-color: #edde00;
   color: white;
   border-radius: 10px;
   border: 1px solid #000000;
@@ -56,4 +43,18 @@
   margin-right: 10px;
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+.customdeletebutton {
+  background-color: #000000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #ff0000;
+}
+
+.customdeletebutton:hover {
+  background-color: #ff0000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #000000;
 }

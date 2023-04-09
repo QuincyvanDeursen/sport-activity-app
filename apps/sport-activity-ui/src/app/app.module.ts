@@ -22,6 +22,9 @@ import { SportEventCreateComponent } from './pages/sport-event/sport-event-creat
 import { SportEventUpdateComponent } from './pages/sport-event/sport-event-update/sport-event-update.component';
 import { EmployeeStatisticsComponent } from './pages/user/employee-statistics/employee-statistics.component';
 import { AboutComponent } from './pages/about/about.component';
+import { EmployeeColumnsComponent } from './pages/employee/employee-columns/employee-columns.component';
+import { EmployeeDetailComponent } from './pages/employee/employee-detail/employee-detail.component';
+import { EmployeeListComponent } from './pages/employee/employee-list/employee-list.component';
 
 @NgModule({
   declarations: [
@@ -41,6 +44,9 @@ import { AboutComponent } from './pages/about/about.component';
     SportEventUpdateComponent,
     EmployeeStatisticsComponent,
     AboutComponent,
+    EmployeeColumnsComponent,
+    EmployeeDetailComponent,
+    EmployeeListComponent,
   ],
   imports: [
     BrowserModule,

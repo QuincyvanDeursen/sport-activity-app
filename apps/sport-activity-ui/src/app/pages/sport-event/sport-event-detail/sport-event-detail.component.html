@@ -1,13 +1,15 @@
 <div *ngIf="sportEvent">
   <div class="container">
-    <div class="row backgrounddark">
-      <div class="col-12 text-center pt-2">
+    <div class="row backgrounddark justify-content-center">
+      <div class="col-12 text-center pt-2 titlebackground" style="width: 80%">
         <h2>
           {{ sportEvent.title }}
         </h2>
       </div>
       <div class="row justify-content-center">
-        <div class="col-12 col-md-6 d-flex justify-content-center">
+        <div
+          class="col-12 col-md-6 d-flex justify-content-center generalbackground p-4"
+        >
           <p>
             {{ sportEvent.description }}
           </p>
@@ -16,7 +18,7 @@
       <div class="row justify-content-center">
         <hr class="rounded w-75 mx-auto" />
         <div class="col-12 col-md-5 d-flex justify-content-center py-3">
-          <div class="d-flex flex-column">
+          <div class="d-flex flex-column generalbackground p-4">
             <div><h4 class="d-block text-center">Informatie</h4></div>
             <h6 class="d-block">Prijs: €{{ sportEvent.price }}</h6>
             <h6 class="d-block">
@@ -37,8 +39,10 @@
           </div>
         </div>
         <div class="col-12 col-md-5 d-flex justify-content-center py-3">
-          <div class="d-flex flex-column">
-            <div><h4 class="d-block text-center">Locatie</h4></div>
+          <div class="d-flex flex-column generalbackground p-4">
+            <div>
+              <h4 class="d-block text-center">Locatie</h4>
+            </div>
             <h6 class="d-block">
               sportclub: {{ sportEvent.sportclub.clubName }}
             </h6>
@@ -80,7 +84,9 @@
             >
           </div>
           <div class="col-3 text-center">
-            <a class="btn customdeletebutton" (click)="deleteSportEvent()"
+            <a
+              class="btn customdeletebutton"
+              (click)="sweetAlertDeleteConfirmation()"
               >Verwijderen</a
             >
           </div>

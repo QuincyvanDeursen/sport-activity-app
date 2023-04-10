@@ -1,0 +1,46 @@
+<div *ngIf="guestList">
+  <div class="container">
+    <div class="row backgrounddark justify-content-center">
+      <div class="col-12 titlebackground" style="width: 80%">
+        <h1 class="text-center">Gastenlijst</h1>
+        <h4 class="text-center">Aantal gasten: {{ guestList.length }}</h4>
+      </div>
+      <div class="d-flex justify-content-center">
+        <div
+          class="generalbackground"
+          style="width: 80%"
+          *ngFor="let guest of guestList"
+        >
+          <div class="row py-3 justify-content-center">
+            <div class="col-12 col-md-9">
+              <h4 class="text-center">
+                {{ guest.firstName | titlecase }}
+                {{ guest.lastName | titlecase }}
+              </h4>
+              <div *ngIf="isAdmin || isEmployee">
+                <h6 class="text-center">{{ guest.email }}</h6>
+              </div>
+            </div>
+            <div
+              *ngIf="isAdmin || isEmployee"
+              class="col-2 col-lg-2 d-flex align-item-center mx-auto"
+            >
+              <input
+                type="checkbox"
+                class="btn-check"
+                id="btn-check-outlined"
+                autocomplete="off"
+              />
+              <label
+                class="btn btn-outline-warning my-auto"
+                for="btn-check-outlined"
+                (click)="changeButtonColor()"
+                >Afwezig</label
+              >
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

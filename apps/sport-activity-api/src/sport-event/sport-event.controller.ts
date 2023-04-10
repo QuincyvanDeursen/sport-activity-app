@@ -15,6 +15,7 @@ import { HasRoles } from '../app/auth/AuthTsFiles/roles.decorator';
 import { RolesGuard } from '../app/auth/AuthTsFiles/roles.guard';
 
 import { SportEventService } from './sport-event.service';
+import { get } from 'http';
 
 @Controller('sportevent')
 export class SportEventController {
@@ -110,6 +111,14 @@ export class SportEventController {
       enrollRequest.sportEventId,
       enrollRequest.currentUserId
     );
+    return result;
+  }
+
+  // @HasRoles(Role.User, Role.Admin)
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @Get(':id/guestlist')
+  async getGuestList(@Param('id') id: string): Promise<object> {
+    const result = await this.sportEventService.getGuestlist(id);
     return result;
   }
 }

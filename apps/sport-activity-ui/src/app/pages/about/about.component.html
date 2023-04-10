@@ -90,10 +90,12 @@
         mogelijk om sportevenemten aan te bevelen aan gebruikers. Om dat te
         realiseren is enkel het “_id” field van mongoDB benodigd. De User node
         heeft dus enkel het “_id” en de “firstName” van de betreffende User. Een
-        sportEvent enkel de “_id” nodig en de “title” van het sportevenement.
-        Zowel “firstName” en “title” zijn toegevoegd om het debuggen makkelijk
-        te maken, aangezien de mongoDB id’s niet prettig leesbaar zijn. De
-        relaties “follows” en “participates” hebben geen extra eigenschappen.
+        sportEvent enkel de “_id” nodig en de "HostId" van het sportevenement.
+        Zowel “firstName” is toegevoegd om het debuggen makkelijk te maken,
+        aangezien de mongoDB id’s niet prettig leesbaar zijn. De "HostId" is
+        toegevoegd zodat de venementen van een specifieke host ook uit Neo4j
+        verwijderd kunnen worden. De relaties “follows” en “participates” hebben
+        geen extra eigenschappen.
       </p>
     </div>
   </div>
@@ -220,6 +222,11 @@
         <li>
           Als ingelogde admin wil ik gebruikers kunnen verwijderen, zodat de
           website geen spam of scam leden bevat.
+        </li>
+        <li>
+          Als ingelogde admin wil ik employees kunnen verwijderen, zodat de
+          website geen spam of scam leden bevat. Ook de bijbehorende evenementen
+          moeten gewist worden.
         </li>
         <li>
           Als ingelogde admin wil ik evenementen kunnen verwijderen, zodat de

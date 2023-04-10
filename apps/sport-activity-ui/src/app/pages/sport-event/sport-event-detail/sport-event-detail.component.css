@@ -21,6 +21,20 @@
   border: 1px solid #000000;
 }
 
+.customguestbutton {
+  background-color: #000000;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #1044f2;
+}
+
+.customguestbutton:hover {
+  background-color: #1044f2;
+  color: white;
+  border-radius: 10px;
+  border: 1px solid #000000;
+}
+
 .customupdatebutton {
   background-color: #000000;
   color: white;

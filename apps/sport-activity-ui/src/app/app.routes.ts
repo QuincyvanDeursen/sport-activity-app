@@ -14,6 +14,7 @@ import { AboutComponent } from './pages/about/about.component';
 import { EmployeeListComponent } from './pages/employee/employee-list/employee-list.component';
 import { EmployeeDetailComponent } from './pages/employee/employee-detail/employee-detail.component';
 import { EmployeeColumnsComponent } from './pages/employee/employee-columns/employee-columns.component';
+import { GuestlistComponent } from './pages/sport-event/guestlist/guestlist.component';
 
 export const appRoutes: Route[] = [
   //about
@@ -36,6 +37,11 @@ export const appRoutes: Route[] = [
     path: 'sportevents/:id/update',
     pathMatch: 'full',
     component: SportEventUpdateComponent,
+  },
+  {
+    path: 'sportevents/:id/guestlist',
+    pathMatch: 'full',
+    component: GuestlistComponent,
   },
   {
     path: 'sportevents/create',

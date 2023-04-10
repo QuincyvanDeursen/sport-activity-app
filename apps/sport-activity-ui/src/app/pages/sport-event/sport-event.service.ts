@@ -207,4 +207,22 @@ export class SportEventService {
 
     return result;
   }
+
+  //get guestlist for sport event request
+  getGuestlistForSportEvent(sportEventId: string): Observable<any> {
+    console.log('get guestlist for sport event ui-service called');
+    console.log(httpOptions.headers);
+    const result = this.http
+      .get<any>(
+        `${environment.SERVER_API_URL}sportevent/${sportEventId}/guestlist`,
+        httpOptions
+      )
+      .pipe(
+        map((response: any) => {
+          return response.results;
+        })
+      );
+
+    return result;
+  }
 }

@@ -21,6 +21,8 @@ export class SportEventDetailComponent implements OnInit, OnDestroy {
   isAdmin = false;
   isUser = false;
   enrolledParticipants?: string[];
+  todaysDate = new Date().getTime();
+  eventDate!: number;
 
   //subscriptions
   enrollSubcription?: Subscription;
@@ -67,6 +69,9 @@ export class SportEventDetailComponent implements OnInit, OnDestroy {
         console.log(v);
         this.sportEvent = v;
         this.enrolledParticipants = v.enrolledParticipants;
+        this.eventDate = new Date(this.sportEvent?.startDateAndTime).getTime();
+        console.log(this.eventDate);
+        console.log(this.todaysDate);
       },
       error: () => SweetAlert.showErrorAlert('Er is iets fout gegaan'),
       complete: () => console.log('getting sportevent by id complete (ui)'),

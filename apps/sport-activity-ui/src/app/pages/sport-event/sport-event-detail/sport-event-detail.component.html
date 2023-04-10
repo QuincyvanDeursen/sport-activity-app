@@ -1,11 +1,24 @@
 <div *ngIf="sportEvent">
   <div class="container">
     <div class="row backgrounddark justify-content-center">
-      <div class="col-12 text-center pt-2 titlebackground" style="width: 80%">
-        <h2>
-          {{ sportEvent.title }}
-        </h2>
+      <div
+        class="row text-center pt-2 titlebackground justify-content-center"
+        style="width: 80%"
+      >
+        <div class="col-12 col-lg-8 d-flex">
+          <h2 class="mx-auto">
+            {{ sportEvent.title }}
+          </h2>
+        </div>
+        <div *ngIf="isUser" class="col-12 col-lg-2 my-auto">
+          <a
+            class="btn customguestbutton"
+            [routerLink]="'/sportevents/' + sportEvent._id + '/guestlist'"
+            >Gastenlijst</a
+          >
+        </div>
       </div>
+
       <div class="row justify-content-center">
         <div
           class="col-12 col-md-6 d-flex justify-content-center generalbackground p-4"
@@ -78,6 +91,14 @@
         <div class="row justify-content-center">
           <div class="col-3 text-center">
             <a
+              target="_blank"
+              class="btn customguestbutton"
+              [routerLink]="'/sportevents/' + sportEvent._id + '/guestlist'"
+              >Gastenlijst</a
+            >
+          </div>
+          <div class="col-3 text-center">
+            <a
               class="btn customupdatebutton"
               [routerLink]="'/sportevents/' + sportEvent._id + '/update'"
               >Aanpassen</a
@@ -101,21 +122,25 @@
         "
       ></div>
       <ng-template #enrollTemplate>
-        <div *ngIf="isUser" class="col-4 mx-auto">
-          <a
-            (click)="enrollInSportEvent()"
-            class="btn customenrollbutton d-flex justify-content-center"
-            >Aanmelden</a
-          >
+        <div *ngIf="eventDate > todaysDate">
+          <div *ngIf="isUser" class="col-4 mx-auto">
+            <a
+              (click)="enrollInSportEvent()"
+              class="btn customenrollbutton d-flex justify-content-center"
+              >Aanmelden</a
+            >
+          </div>
         </div>
       </ng-template>
       <ng-template #unenrollTemplate>
-        <div *ngIf="isUser" class="col-4 mx-auto">
-          <a
-            (click)="unenrollInSportEvent()"
-            class="btn customunenrollbutton d-flex justify-content-center"
-            >Afmelden</a
-          >
+        <div *ngIf="eventDate > todaysDate">
+          <div *ngIf="isUser" class="col-4 mx-auto">
+            <a
+              (click)="unenrollInSportEvent()"
+              class="btn customunenrollbutton d-flex justify-content-center"
+              >Afmelden</a
+            >
+          </div>
         </div>
       </ng-template>
     </div>

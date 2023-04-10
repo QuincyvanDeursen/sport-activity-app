@@ -14,7 +14,9 @@ export class Sportclub {
     validate: {
       validator: (value: string) => {
         // Check if the value matches the website format
-        return /^(ftp|http|https):\/\/[^ "]+$/.test(value);
+        return /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+(\.[a-zA-Z]{2,})(\/\S*)?$/.test(
+          value
+        );
       },
       message: 'Invalid website URL',
     },

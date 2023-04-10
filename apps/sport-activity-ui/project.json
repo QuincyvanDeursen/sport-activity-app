@@ -16,12 +16,7 @@
         "tsConfig": "apps/sport-activity-ui/tsconfig.app.json",
         "assets": [
           "apps/sport-activity-ui/src/favicon.ico",
-          "apps/sport-activity-ui/src/assets",
-          {
-            "glob": "_redirects",
-            "input": "src",
-            "output": "/"
-          }
+          "apps/sport-activity-ui/src/assets"
         ],
         "styles": [
           "node_modules/bootstrap/dist/css/bootstrap.min.css",

@@ -9,7 +9,7 @@
         <div
           class="generalbackground"
           style="width: 80%"
-          *ngFor="let guest of guestList"
+          *ngFor="let guest of guestList; let i = index"
         >
           <div class="row py-3 justify-content-center">
             <div class="col-12 col-md-9">
@@ -27,14 +27,14 @@
             >
               <input
                 type="checkbox"
-                class="btn-check"
-                id="btn-check-outlined"
+                class="btn-check button-{{ i }}"
+                id="btn-check-outlined-{{ i }}"
                 autocomplete="off"
+                (click)="changeButtonColor(i)"
               />
               <label
-                class="btn btn-outline-warning my-auto"
-                for="btn-check-outlined"
-                (click)="changeButtonColor()"
+                class="btn btn-outline-warning my-auto button-{{ i }}"
+                for="btn-check-outlined-{{ i }}"
                 >Afwezig</label
               >
             </div>

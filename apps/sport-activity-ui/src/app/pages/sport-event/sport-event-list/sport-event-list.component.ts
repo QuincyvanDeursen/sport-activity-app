@@ -50,7 +50,9 @@ export class SportEventListComponent implements OnInit, OnDestroy {
       .getUpdateSubject()
       .subscribe((updatedData) => {
         // update the sportEvent array with the new data
+        console.log('updatedData', updatedData);
         this.sportEvents = updatedData as SportEvent[];
+        this.filteredSportEvents = updatedData as SportEvent[];
       });
   }
 

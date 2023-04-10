@@ -70,8 +70,6 @@ export class SportEventDetailComponent implements OnInit, OnDestroy {
         this.sportEvent = v;
         this.enrolledParticipants = v.enrolledParticipants;
         this.eventDate = new Date(this.sportEvent?.startDateAndTime).getTime();
-        console.log(this.eventDate);
-        console.log(this.todaysDate);
       },
       error: () => SweetAlert.showErrorAlert('Er is iets fout gegaan'),
       complete: () => console.log('getting sportevent by id complete (ui)'),

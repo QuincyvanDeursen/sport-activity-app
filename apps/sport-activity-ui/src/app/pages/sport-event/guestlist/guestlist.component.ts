@@ -42,25 +42,26 @@ export class GuestlistComponent implements OnInit {
       },
     });
   }
-
-  changeButtonColor() {
+  changeButtonColor(i: number) {
     const checkbox = document.getElementById(
-      'btn-check-outlined'
+      `btn-check-outlined-${i}`
     ) as HTMLInputElement;
     const label = document.querySelector(
-      'label[for="btn-check-outlined"]'
+      `label[for=btn-check-outlined-${i}]`
     ) as HTMLLabelElement;
-    checkbox.addEventListener('click', () => {
-      if (checkbox.checked) {
-        label.classList.add('btn-outline-success');
-        label.classList.remove('btn-outline-warning');
-        label.textContent = 'Aanwezig!';
-      } else {
-        label.classList.add('btn-outline-warning');
-        label.classList.remove('btn-outline-success');
-        label.textContent = 'Afwezig';
-      }
-    });
+
+    if (checkbox.checked) {
+      label.classList.remove('btn-outline-warning');
+      label.classList.add('btn-outline-success');
+      label.textContent = 'Aanwezig!';
+    } else {
+      label.classList.remove('btn-outline-success');
+      label.classList.add('btn-outline-warning');
+      label.textContent = 'Afwezig';
+    }
+
+    // Remove the disabled attribute
+    checkbox.removeAttribute('disabled');
   }
 
   ///////////////////////////////////////////////////////////

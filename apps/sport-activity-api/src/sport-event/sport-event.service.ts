@@ -437,7 +437,7 @@ export class SportEventService {
   //get guestlist for a sport event
   async getGuestlist(sportEventId: string): Promise<object> {
     try {
-      const result = this.sportEventModel
+      const result = await this.sportEventModel
         .findOne({ _id: sportEventId })
         .select('enrolledParticipants')
         .populate('enrolledParticipants', 'firstName lastName email')

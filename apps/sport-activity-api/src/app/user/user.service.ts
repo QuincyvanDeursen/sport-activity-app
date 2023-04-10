@@ -350,6 +350,8 @@ export class UserService {
       await this.sportEventModel
         .updateMany({}, { $pull: { enrolledParticipants: _id } })
         .lean();
+      //delete all sportevents from users
+      await this.sportEventModel.deleteMany({ hostId: _id }).lean();
 
       return true;
     } catch (error) {
@@ -362,6 +364,11 @@ export class UserService {
     try {
       await this.neo4jService.write(
         `MATCH (a:User {mongoId: "${_id}"})
+        DETACH DELETE a
+        `
+      );
+      await this.neo4jService.write(
+        `MATCH (a:SportEvent {hostId: "${_id}"})
         DETACH DELETE a
         `
       );

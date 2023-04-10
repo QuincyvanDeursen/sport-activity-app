@@ -25,6 +25,7 @@ import { AboutComponent } from './pages/about/about.component';
 import { EmployeeColumnsComponent } from './pages/employee/employee-columns/employee-columns.component';
 import { EmployeeDetailComponent } from './pages/employee/employee-detail/employee-detail.component';
 import { EmployeeListComponent } from './pages/employee/employee-list/employee-list.component';
+import { GuestlistComponent } from './pages/sport-event/guestlist/guestlist.component';
 
 @NgModule({
   declarations: [
@@ -47,6 +48,7 @@ import { EmployeeListComponent } from './pages/employee/employee-list/employee-l
     EmployeeColumnsComponent,
     EmployeeDetailComponent,
     EmployeeListComponent,
+    GuestlistComponent,
   ],
   imports: [
     BrowserModule,

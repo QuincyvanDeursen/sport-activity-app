@@ -1,7 +1,7 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { SportEvent, User } from '@sport-activity-app/domain';
-import { Model } from 'mongoose';
+import { Model, Schema } from 'mongoose';
 import { SportEventDocument } from '../app/Schemas/sportEvent.schema';
 import { UserDocument } from '../app/Schemas/user.schema';
 import { Neo4jService } from 'nest-neo4j/dist';
@@ -16,17 +16,6 @@ export class SportEventService {
     private readonly Neo4jService: Neo4jService
   ) {}
 
-  // get all sport events.
-  async getAllSportEvents(): Promise<SportEvent[]> {
-    console.log('get all sportevents service (api) called');
-    try {
-      const result: SportEvent[] = await this.sportEventModel.find();
-      return result;
-    } catch (error) {
-      throw new HttpException(error.message, 400);
-    }
-  }
-
   ///////////////////////////////////////
   /////////////// CREATE   //////////////
   ///////////////////////////////////////
@@ -34,12 +23,15 @@ export class SportEventService {
   //creating a sport event.
   async create(sportEvent: SportEvent): Promise<object> {
     console.log('create sportevent service (api) called');
-    let createdSportEventInMongoDB: { mongoId: string; title: string };
+    let createdSportEventInMongoDB: {
+      mongoId: string;
+      hostId: Schema.Types.ObjectId;
+    };
     try {
       createdSportEventInMongoDB = await this.createEventInMongoDB(sportEvent);
       const createdSportEventInNeo4j = await this.createEventInNeo4j(
         createdSportEventInMongoDB.mongoId,
-        createdSportEventInMongoDB.title
+        createdSportEventInMongoDB.hostId
       );
       if (createdSportEventInNeo4j && createdSportEventInMongoDB) {
         return {
@@ -59,14 +51,14 @@ export class SportEventService {
 
   async createEventInMongoDB(
     sportEvent: SportEvent
-  ): Promise<{ mongoId: string; title: string }> {
+  ): Promise<{ mongoId: string; hostId: Schema.Types.ObjectId }> {
     console.log('create sportevent service (api) called (MongoDB)');
     try {
       const createdSportEvent = new this.sportEventModel(sportEvent);
       await createdSportEvent.save();
       const createdSportEventInMongoDB = {
         mongoId: createdSportEvent._id.toString(),
-        title: createdSportEvent.title,
+        hostId: createdSportEvent.hostId,
       };
 
       return createdSportEventInMongoDB;
@@ -75,11 +67,14 @@ export class SportEventService {
     }
   }
 
-  async createEventInNeo4j(mongoId: string, title: string): Promise<boolean> {
+  async createEventInNeo4j(
+    mongoId: string,
+    hostId: Schema.Types.ObjectId
+  ): Promise<boolean> {
     console.log('create sportevent service (api) called (Neo4j)');
     try {
       await this.Neo4jService.write(
-        `CREATE (n:SportEvent {mongoId: "${mongoId}", Name: "${title}"})`
+        `CREATE (n:SportEvent {mongoId: "${mongoId}", hostId: "${hostId}"})`
       );
       return true;
     } catch (error) {
@@ -100,6 +95,20 @@ export class SportEventService {
         throw new HttpException('SportEvent not found', 404);
       }
       return sportEvent;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  // get all sport events.
+  async getAllSportEvents(): Promise<SportEvent[]> {
+    console.log('get all sportevents service (api) called');
+    try {
+      //find all sportevents which have a start date in the future.
+      const result: SportEvent[] = await this.sportEventModel.find({
+        startDateAndTime: { $gte: new Date() },
+      });
+      return result;
     } catch (error) {
       throw new HttpException(error.message, 400);
     }
@@ -416,6 +425,25 @@ export class SportEventService {
       });
 
       return sportEvents;
+    } catch (error) {
+      throw new HttpException(error.message, 400);
+    }
+  }
+
+  ///////////////////////////////////////
+  ///////////    Get guestlist  /////////
+  ///////////////////////////////////////
+
+  //get guestlist for a sport event
+  async getGuestlist(sportEventId: string): Promise<object> {
+    try {
+      const result = this.sportEventModel
+        .findOne({ _id: sportEventId })
+        .select('enrolledParticipants')
+        .populate('enrolledParticipants', 'firstName lastName email')
+        .exec();
+
+      return result;
     } catch (error) {
       throw new HttpException(error.message, 400);
     }

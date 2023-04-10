@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { MongooseModule, getModelToken } from '@nestjs/mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
-import { Model, disconnect } from 'mongoose';
+import { Model, Schema, disconnect } from 'mongoose';
 import { MongoClient } from 'mongodb';
 
 import { Neo4jService } from 'nest-neo4j/dist';
@@ -72,13 +72,14 @@ describe('SportEventService', () => {
       city: 'Berlin',
       roles: ['user'],
     });
-
+    const date = new Date();
+    const tommorow = date.setDate(date.getDate() + 1);
     const sportEvent1 = new sportEventModel({
       _id: '64177204075a9a1a58d07a55',
       title: 'test',
       description: 'test',
       price: 10,
-      startDateAndTime: new Date(),
+      startDateAndTime: tommorow,
       durationInMinutes: 60,
       maximumNumberOfParticipants: 10,
       enrolledParticipants: [user1._id],
@@ -97,12 +98,13 @@ describe('SportEventService', () => {
         },
       },
     });
-
+    const date2 = new Date();
+    const yesterday = date.setDate(date2.getDate() - 1);
     const sportEvent2 = new sportEventModel({
       title: 'test',
       description: 'test',
       price: 10,
-      startDateAndTime: new Date(),
+      startDateAndTime: yesterday,
       durationInMinutes: 60,
       maximumNumberOfParticipants: 10,
       enrolledParticipants: [],
@@ -201,39 +203,41 @@ describe('SportEventService', () => {
       const result = await service.createEventInMongoDB(sportEvent1);
 
       expect(result).toBeDefined();
-      expect(result.title).toEqual(sportEvent1.title);
       expect(result).toHaveProperty('mongoId');
+      expect(result).toHaveProperty('hostId');
     });
   });
 
   describe('create event in neo4j', () => {
     /////////////////////////////////////////////
-    it('should create a event in Neo4j', async () => {
-      const result = await service.createEventInNeo4j('123456', 'event');
+    it('should create an event in Neo4j', async () => {
+      const hostId = new Schema.Types.ObjectId('64177204075a5a1a58d07a88');
+      const result = await service.createEventInNeo4j('123456', hostId);
       expect(neo4jService.write).toBeCalledWith(
-        `CREATE (n:SportEvent {mongoId: "123456", Name: "event"})`
+        `CREATE (n:SportEvent {mongoId: "123456", hostId: "${hostId}"})`
       );
       expect(result).toBe(true);
     });
 
     ///////////////////////////////////////////////////////////////////
     it('should throw an error if Neo4j write fails', async () => {
+      const hostId = new Schema.Types.ObjectId('64177204075a5a1a58d07a88');
       const errorMessage = 'Neo4j write error';
       (neo4jService.write as jest.Mock).mockRejectedValueOnce(
         new Error(errorMessage)
       );
 
       await expect(
-        service.createEventInNeo4j('123456', 'event')
+        service.createEventInNeo4j('123456', hostId)
       ).rejects.toThrow(new HttpException(errorMessage, 400));
     });
   });
 
   describe('find sport events', () => {
     /////////////////////////////////////////////
-    it('should find all sport events', async () => {
+    it('should find all future sport events', async () => {
       const result = await service.getAllSportEvents();
-      expect(result).toHaveLength(2);
+      expect(result).toHaveLength(1);
       expect(result[0].title).toEqual('test');
     });
 
